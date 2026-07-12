@@ -131,7 +131,7 @@ export default function Panel() {
         <p className="text-secondary" style={{ fontSize: '0.875rem' }}>Configure and launch network stress tests.</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '24px' }}>
+      <div className="panel-container-grid">
         
         {/* Banner if no plan */}
         {!hasPlan && (
@@ -470,12 +470,7 @@ export default function Panel() {
                     <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.06)' }}></div>
 
                     {/* Card Content Grid */}
-                    <div style={{ 
-                      display: 'grid', 
-                      gridTemplateColumns: '1.5fr 1.5fr 1fr 2fr', 
-                      gap: '20px',
-                      padding: '20px'
-                    }}>
+                    <div className="panel-card-content-grid">
                       {/* Column 1 */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <div>

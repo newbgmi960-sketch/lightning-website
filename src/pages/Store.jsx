@@ -140,9 +140,7 @@ export default function Store() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '1000px', margin: '0 auto', paddingTop: '40px', paddingBottom: '80px' }}>
       
       {/* Header */}
-      <h1 style={{
-        fontSize: '4rem',
-        fontWeight: 800,
+      <h1 className="store-title" style={{
         background: 'linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
@@ -247,7 +245,7 @@ export default function Store() {
       </div>
 
       {/* Pricing Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', width: '100%' }}>
+      <div className="store-pricing-grid">
         {normalPlans.map((plan, idx) => (
           <div key={idx} className="panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', border: activePlan === plan.name ? '1px solid var(--accent-color)' : '1px solid var(--border-color)' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>{plan.name}</h3>

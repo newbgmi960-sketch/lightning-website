@@ -24,7 +24,7 @@ export default function Deposit() {
       </div>
 
       {/* Balance Summary Card */}
-      <div className="panel" style={{ padding: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.01)' }}>
+      <div className="panel deposit-balance-card" style={{ padding: '32px', background: 'rgba(255,255,255,0.01)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--accent-transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Wallet size={24} color="var(--accent-color)" />
@@ -37,7 +37,7 @@ export default function Deposit() {
       </div>
 
       {/* Grid options */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }} className="dashboard-bottom-grid">
+      <div className="dashboard-bottom-grid">
         
         {/* Automatic gateways */}
         <div className="panel" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>

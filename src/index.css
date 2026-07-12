@@ -423,4 +423,83 @@ input[type=range]::-webkit-slider-thumb {
   }
 }
 
+/* ==========================================
+   Responsive Panel Page Grids
+   ========================================== */
+.panel-container-grid {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 24px;
+}
+
+.panel-card-content-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr 2fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+@media (max-width: 1024px) {
+  .panel-container-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .panel-card-content-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+/* ==========================================
+   Responsive Store Pricing Page
+   ========================================== */
+.store-title {
+  font-size: 4rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.store-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .store-pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .store-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .store-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  .store-title {
+    font-size: 2.5rem;
+  }
+}
+
+.deposit-balance-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 600px) {
+  .deposit-balance-card {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 16px;
+  }
+}
+
+
+
 
