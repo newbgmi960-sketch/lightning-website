@@ -16,7 +16,6 @@ export default function AppLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={14} /> },
     { name: 'Panel', path: '/panel', icon: <Terminal size={14} /> },
-    { name: 'API', path: '/apis', icon: <Globe size={14} /> },
     { name: 'Store', path: '/store', icon: <ShoppingCart size={14} /> },
     { name: 'Deposit', path: '/deposit', icon: <Wallet size={14} /> },
     { name: 'FAQ', path: '/faq', icon: <HelpCircle size={14} /> },

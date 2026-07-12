@@ -4,7 +4,6 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Panel from './pages/Panel';
-import ApiManager from './pages/ApiManager';
 import Store from './pages/Store';
 import Profile from './pages/Profile';
 import Deposit from './pages/Deposit';
@@ -23,7 +22,6 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/panel" element={<Panel />} />
-          <Route path="/apis" element={<ApiManager />} />
           <Route path="/store" element={<Store />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/deposit" element={<Deposit />} />
