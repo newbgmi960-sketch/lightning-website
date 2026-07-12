@@ -111,10 +111,14 @@ export default function Store() {
     }
 
     const newBalance = balance - plan.price;
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30); // 1 Month from now
+    
     const { data, error } = await supabase.auth.updateUser({
       data: { 
         balance: newBalance,
-        active_plan: plan.name
+        active_plan: plan.name,
+        plan_expiry: expiryDate.toISOString()
       }
     });
 
@@ -123,7 +127,7 @@ export default function Store() {
     } else {
       setBalance(newBalance);
       setActivePlan(plan.name);
-      setMessage({ text: `Success! Purchased ${plan.name}. Your active plan has been updated.`, type: 'success' });
+      setMessage({ text: `Success! Purchased ${plan.name}. Your active plan expires on ${expiryDate.toLocaleDateString()}.`, type: 'success' });
     }
     setPurchaseLoading(null);
   };

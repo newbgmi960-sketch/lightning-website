@@ -19,6 +19,7 @@ const getPlanDetails = (planName) => {
 
 export default function Profile() {
   const [activePlan, setActivePlan] = useState('None');
+  const [expiry, setExpiry] = useState('N/A');
   const [loading, setLoading] = useState(true);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,6 +30,10 @@ export default function Profile() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
+        const rawExpiry = session.user.user_metadata?.plan_expiry;
+        if (rawExpiry) {
+          setExpiry(new Date(rawExpiry).toLocaleDateString());
+        }
       }
       setLoading(false);
     });
@@ -117,7 +122,7 @@ export default function Profile() {
       <div className="panel" style={{ width: '100%', padding: '24px' }}>
         <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#fff', marginBottom: '24px' }}>Plan Details</h3>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }} className="dashboard-stats-grid">
           <div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px' }}>PLAN</div>
             <div style={{ fontWeight: 600, color: '#fff', fontSize: '1rem' }}>{planInfo.name}</div>
@@ -131,10 +136,8 @@ export default function Profile() {
             <div className="mono" style={{ fontWeight: 600, color: '#fff', fontSize: '1rem' }}>{planInfo.duration}s</div>
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px' }}>STATUS</div>
-            <div style={{ fontWeight: 600, color: planInfo.name !== 'None' ? '#10b981' : '#6b7280', fontSize: '1rem' }}>
-              {planInfo.name !== 'None' ? 'Active' : 'Inactive'}
-            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px' }}>EXPIRES</div>
+            <div className="mono" style={{ fontWeight: 600, color: '#fff', fontSize: '1rem' }}>{expiry}</div>
           </div>
         </div>
       </div>

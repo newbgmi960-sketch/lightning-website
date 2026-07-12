@@ -1,30 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Users, Zap, Server, ChevronRight } from 'lucide-react';
+import { Activity, Users, Zap, Server } from 'lucide-react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase } from '../lib/supabaseClient';
-
-const data = [
-  { time: '0:00', load: 32 }, { time: '1:00', load: 33 }, { time: '2:00', load: 32.5 },
-  { time: '3:00', load: 35 }, { time: '4:00', load: 34.5 }, { time: '5:00', load: 36 },
-  { time: '6:00', load: 35.5 }, { time: '7:00', load: 38 }, { time: '8:00', load: 42 },
-  { time: '9:00', load: 39 }, { time: '10:00', load: 38.5 }, { time: '11:00', load: 41 },
-  { time: '12:00', load: 45 }, { time: '13:00', load: 47 }, { time: '14:00', load: 44 },
-  { time: '15:00', load: 43.5 }, { time: '16:00', load: 42 }, { time: '17:00', load: 40 },
-  { time: '18:00', load: 38 }, { time: '19:00', load: 36 }, { time: '20:00', load: 35 },
-  { time: '21:00', load: 34.5 }, { time: '22:00', load: 34 }, { time: '23:00', load: 33.8 }
-];
-
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{ background: '#0a0a0a', border: '1px solid #333', borderRadius: '6px', padding: '8px 12px', boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}>
-        <p style={{ color: '#a1a1aa', fontSize: '0.75rem', marginBottom: '2px' }}>Network Load</p>
-        <p className="mono" style={{ color: '#fff', fontSize: '0.875rem' }}>{payload[0].value.toFixed(1)}%</p>
-      </div>
-    );
-  }
-  return null;
-};
 
 const getPlanDetails = (planName) => {
   const name = (planName || 'None').toUpperCase();
@@ -44,15 +21,73 @@ const getPlanDetails = (planName) => {
 export default function Dashboard() {
   const [balance, setBalance] = useState(0.00);
   const [activePlan, setActivePlan] = useState('None');
+  const [expiry, setExpiry] = useState('N/A');
+
+  // Realistic changing live numbers
+  const [runningAttacks, setRunningAttacks] = useState(0);
+  const [totalAttacks, setTotalAttacks] = useState(0);
+  const [liveLoad, setLiveLoad] = useState(0.0);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setBalance(session.user.user_metadata?.balance ?? 0.00);
         setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
+        const rawExpiry = session.user.user_metadata?.plan_expiry;
+        if (rawExpiry) {
+          setExpiry(new Date(rawExpiry).toLocaleDateString());
+        }
       }
     });
   }, []);
+
+  // Set up live updating metrics (attacks & load load simulation)
+  useEffect(() => {
+    // Generate initial 24 hour chart data with low metrics starting around 0
+    const initialData = Array.from({ length: 24 }).map((_, i) => ({
+      time: `${i}:00`,
+      load: Math.random() * 5 // Keep initial load values very low (0% to 5%)
+    }));
+    setChartData(initialData);
+
+    const interval = setInterval(() => {
+      // Simulate random fluctuations of small scale
+      const currentActive = Math.floor(Math.random() * 3); // 0 to 2 running attacks
+      setRunningAttacks(currentActive);
+
+      // Randomly increment total attacks slightly over time
+      setTotalAttacks(prev => prev + Math.floor(Math.random() * 2));
+
+      const newLoad = Math.max(0.0, +(Math.random() * 8).toFixed(1)); // 0% to 8% live load
+      setLiveLoad(newLoad);
+
+      // Update chart dynamically
+      setChartData(prev => {
+        const next = [...prev.slice(1)];
+        const nextTime = new Date();
+        next.push({
+          time: `${nextTime.getHours()}:${nextTime.getMinutes()}`,
+          load: newLoad
+        });
+        return next;
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ background: '#0a0a0a', border: '1px solid #333', borderRadius: '6px', padding: '8px 12px', boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}>
+          <p style={{ color: '#a1a1aa', fontSize: '0.75rem', marginBottom: '2px' }}>Network Load</p>
+          <p className="mono" style={{ color: '#fff', fontSize: '0.875rem' }}>{payload[0].value.toFixed(1)}%</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   const planInfo = getPlanDetails(activePlan);
 
@@ -71,7 +106,7 @@ export default function Dashboard() {
             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Running Attacks</span>
             <Zap size={16} color="var(--text-muted)" />
           </div>
-          <div className="mono" style={{ fontSize: '2rem', fontWeight: 500, color: '#fff' }}>0</div>
+          <div className="mono" style={{ fontSize: '2rem', fontWeight: 500, color: '#fff' }}>{runningAttacks}</div>
         </div>
         
         <div className="panel" style={{ padding: '20px' }}>
@@ -79,7 +114,7 @@ export default function Dashboard() {
             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Total Attacks</span>
             <Activity size={16} color="var(--text-muted)" />
           </div>
-          <div className="mono" style={{ fontSize: '2rem', fontWeight: 500, color: '#fff' }}>2,619,455</div>
+          <div className="mono" style={{ fontSize: '2rem', fontWeight: 500, color: '#fff' }}>{totalAttacks}</div>
         </div>
         
         <div className="panel" style={{ padding: '20px' }}>
@@ -102,13 +137,13 @@ export default function Dashboard() {
             <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Global Network Load</div>
           </div>
           <div className="mono" style={{ fontSize: '0.875rem', color: '#fff' }}>
-            34.3%
+            {liveLoad.toFixed(1)}%
           </div>
         </div>
 
         <div style={{ height: '240px', width: '100%' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="colorLoad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#fff" stopOpacity={0.1}/>
@@ -157,11 +192,8 @@ export default function Dashboard() {
               <span className="mono" style={{ color: '#fff' }}>{planInfo.duration}s</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid #222' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Status</span>
-              <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: planInfo.name !== 'None' ? '#10b981' : '#6b7280' }}></div> 
-                 {planInfo.name !== 'None' ? 'Active' : 'Inactive'}
-              </span>
+              <span style={{ color: 'var(--text-secondary)' }}>Expires</span>
+              <span className="mono" style={{ color: '#fff' }}>{expiry}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '4px' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Balance</span>
