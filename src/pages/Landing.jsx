@@ -23,19 +23,19 @@ const itemVariants = {
 
 const Header = () => {
   return (
-    <header style={{ position: 'fixed', top: 0, width: '100%', padding: '24px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50, backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+    <header className="landing-header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ width: '40px', height: '40px', background: 'var(--accent-color)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px var(--accent-transparent)' }}>
           <Zap color="var(--bg-color)" size={24} />
         </div>
         <span className="outfit" style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', color: 'white' }}>LightningBot</span>
       </div>
-      <nav style={{ display: 'flex', gap: '32px' }}>
+      <nav className="landing-nav">
         <a href="#features" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Features</a>
         <a href="#pricing" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Pricing</a>
         <a href="#faq" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>FAQ</a>
       </nav>
-      <div style={{ display: 'flex', gap: '16px' }}>
+      <div className="landing-actions">
         <Link to="/login" className="btn btn-ghost" style={{ padding: '10px 24px', borderRadius: '12px' }}>Log In</Link>
         <Link to="/dashboard" className="btn btn-primary" style={{ padding: '10px 24px', borderRadius: '12px' }}>Dashboard <ArrowRight size={16} /></Link>
       </div>
@@ -48,7 +48,7 @@ export default function Landing() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
       
-      <main style={{ flex: 1, paddingTop: '120px' }}>
+      <main className="landing-main" style={{ flex: 1, paddingTop: '120px' }}>
         {/* Hero Section */}
         <section style={{ padding: '80px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
           {/* Background Glow */}
@@ -61,7 +61,7 @@ export default function Landing() {
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Enterprise Grade Infrastructure</span>
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="h1" style={{ fontSize: '5.5rem', lineHeight: 1.1, marginBottom: '24px' }}>
+            <motion.h1 variants={itemVariants} className="h1 hero-title">
               Next Generation <br/>
               <span style={{ color: 'var(--accent-color)', textShadow: '0 0 40px var(--accent-transparent)' }}>Attack Platform</span>
             </motion.h1>
@@ -70,7 +70,7 @@ export default function Landing() {
               Experience the pinnacle of network testing. LightningBot delivers unmatched power, precision, and reliability for your security infrastructure.
             </motion.p>
             
-            <motion.div variants={itemVariants} style={{ display: 'flex', gap: '24px', justifyContent: 'center' }}>
+            <motion.div variants={itemVariants} className="hero-buttons">
               <Link to="/register" className="btn btn-primary" style={{ padding: '16px 40px', fontSize: '1.125rem', borderRadius: '16px', gap: '12px' }}>
                 Get Started <ArrowRight size={20} />
               </Link>
@@ -83,7 +83,7 @@ export default function Landing() {
 
         {/* Stats Section */}
         <section style={{ padding: '80px 24px' }}>
-           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
+           <div className="stats-grid">
               {[
                 { icon: <Activity size={24} color="var(--accent-color)" />, value: '99.99%', label: 'Network Uptime' },
                 { icon: <Server size={24} color="var(--accent-color)" />, value: '500+', label: 'Global Servers' },

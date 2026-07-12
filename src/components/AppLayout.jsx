@@ -20,20 +20,10 @@ export default function AppLayout() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Header */}
-      <header style={{ 
-        borderBottom: '1px solid var(--border-color)', 
-        background: 'var(--bg-color)',
-        padding: '12px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50
-      }}>
+      <header className="dashboard-header">
         
         {/* Left: Brand & Nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+        <div className="dashboard-left">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
             <div style={{ width: '24px', height: '24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                <Command size={14} color="#fff" />
@@ -41,7 +31,7 @@ export default function AppLayout() {
             <span style={{ fontWeight: 700, fontSize: '1rem', color: '#fff', letterSpacing: '-0.025em' }}>Lightning</span>
           </div>
 
-          <nav style={{ display: 'flex', gap: '4px', position: 'relative' }}>
+          <nav className="dashboard-nav">
             {navItems.map((item) => {
               // Since paths are like '/dashboard', we can check exact match
               const isActive = location.pathname === item.path;
@@ -85,7 +75,7 @@ export default function AppLayout() {
         </div>
 
         {/* Right: Actions & Profile */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="dashboard-right">
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>

@@ -35,7 +35,7 @@ export default function Dashboard() {
       </div>
 
       {/* Top Stats Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+      <div className="dashboard-stats-grid">
         <div className="panel" style={{ padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Running Attacks</span>
@@ -105,7 +105,7 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div className="dashboard-bottom-grid">
         
         {/* Plan Details */}
         <div className="panel" style={{ padding: '24px' }}>
