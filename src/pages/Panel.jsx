@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Send, Search, ShieldAlert, Cpu, Activity, Settings, Info, Zap, Square } from 'lucide-react';
+import { Terminal, Send, Search, ShieldAlert, Cpu, Activity, Settings, Info, Zap, Square, Loader } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 
 export default function Panel() {
   const [layer, setLayer] = useState('L4');
@@ -12,7 +14,37 @@ export default function Panel() {
   const [isAttacking, setIsAttacking] = useState(false);
   const [activeTasks, setActiveTasks] = useState([]);
   
-  const maxConns = 70; // Set to 70 as per user request
+  const [activePlan, setActivePlan] = useState('None');
+  const [loadingPlan, setLoadingPlan] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
+      }
+      setLoadingPlan(false);
+    });
+  }, []);
+
+  const getPlanLimits = (planName) => {
+    const name = (planName || 'None').toUpperCase();
+    if (name.includes('STARTER')) return { name: 'Starter #1', concurrents: 1, duration: 60 };
+    if (name.includes('BASIC #1')) return { name: 'Basic #1', concurrents: 2, duration: 1200 };
+    if (name.includes('BASIC #2')) return { name: 'Basic #2', concurrents: 3, duration: 1200 };
+    if (name.includes('ADVANCED #1')) return { name: 'Advanced #1', concurrents: 5, duration: 1200 };
+    if (name.includes('ADVANCED #2')) return { name: 'Advanced #2', concurrents: 8, duration: 800 };
+    if (name.includes('PROFESSIONAL #1')) return { name: 'Professional #1', concurrents: 10, duration: 1200 };
+    if (name.includes('PROFESSIONAL #2')) return { name: 'Professional #2', concurrents: 13, duration: 1500 };
+    if (name.includes('BUSINESS #1')) return { name: 'Business #1', concurrents: 16, duration: 2200 };
+    if (name.includes('BUSINESS #2')) return { name: 'Business #2', concurrents: 20, duration: 2500 };
+    if (name.includes('ENTERPRISE')) return { name: 'Enterprise', concurrents: 40, duration: 2100 };
+    return { name: 'None', concurrents: 0, duration: 0 };
+  };
+
+  const planLimits = getPlanLimits(activePlan);
+  const maxConns = planLimits.concurrents;
+  const maxDuration = planLimits.duration;
+  const hasPlan = planLimits.name !== 'None';
 
   useEffect(() => {
     if (activeTasks.length > 0) {
@@ -49,7 +81,7 @@ export default function Panel() {
   };
 
   const handleLaunchAttack = async () => {
-    if (!target || !method) return;
+    if (!target || !method || !hasPlan) return;
     
     setIsAttacking(true);
     
@@ -59,16 +91,19 @@ export default function Panel() {
       const d = new Date();
       const formattedDate = `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
-      const connsCount = Number(conns) || 1;
+      // Enforce limits
+      const finalConns = Math.min(Number(conns) || 1, maxConns);
+      const finalDuration = Math.min(Number(time) || 10, maxDuration);
+
       const newTasks = [];
-      for (let i = 0; i < connsCount; i++) {
+      for (let i = 0; i < finalConns; i++) {
         newTasks.push({
           id: `${Date.now()}-${i}-${Math.random()}`,
           target,
           method: method.toUpperCase(),
           port,
-          time: Number(time),
-          timeLeft: Number(time),
+          time: finalDuration,
+          timeLeft: finalDuration,
           conns: 1, // each simulated attack card shows x1
           layer,
           startedAt: formattedDate
@@ -80,6 +115,14 @@ export default function Panel() {
     }, 800);
   };
   
+  if (loadingPlan) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%', minHeight: '300px' }}>
+        <Loader className="animate-spin" size={24} color="var(--accent-color)" />
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '100%', width: '100%' }}>
       
@@ -90,8 +133,31 @@ export default function Panel() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '24px' }}>
         
+        {/* Banner if no plan */}
+        {!hasPlan && (
+          <div style={{ 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            border: '1px solid rgba(239, 68, 68, 0.2)', 
+            borderRadius: '12px', 
+            padding: '16px 20px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px',
+            color: '#f87171',
+            gridColumn: 'span 2'
+          }}>
+            <ShieldAlert size={24} />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '2px', textTransform: 'uppercase' }}>No Active Plan</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                You do not have an active subscription. Please visit the <Link to="/store" style={{ color: '#fff', textDecoration: 'underline', fontWeight: 600 }}>Store</Link> to purchase a plan before launching attacks.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Left Column: Configuration */}
-        <div className="panel" style={{ padding: '24px' }}>
+        <div className="panel" style={{ padding: '24px', opacity: hasPlan ? 1 : 0.6 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <Settings size={18} color="var(--text-secondary)" style={{ transform: 'rotate(0deg)' }} />
             <h2 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', margin: 0 }}>Configuration</h2>
@@ -106,14 +172,16 @@ export default function Panel() {
               <div className="toggle-group" style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '4px' }}>
                 <button 
                   className={`toggle-btn ${layer === 'L4' ? 'active' : ''}`}
-                  onClick={() => setLayer('L4')}
+                  onClick={() => hasPlan && setLayer('L4')}
+                  disabled={!hasPlan}
                   style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
                 >
                   LAYER 4 - UDP
                 </button>
                 <button 
                   className={`toggle-btn ${layer === 'L7' ? 'active' : ''}`}
-                  onClick={() => setLayer('L7')}
+                  onClick={() => hasPlan && setLayer('L7')}
+                  disabled={!hasPlan}
                   style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
                 >
                   LAYER 7 - HTTP
@@ -129,6 +197,7 @@ export default function Panel() {
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
                 placeholder="20.204.231.11" 
+                disabled={!hasPlan}
                 style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px' }}
               />
             </div>
@@ -140,6 +209,7 @@ export default function Panel() {
                 <select 
                   value={subnet} 
                   onChange={(e) => setSubnet(e.target.value)}
+                  disabled={!hasPlan}
                   style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', color: '#fff' }}
                 >
                   <option value="/32 — Host (1)">/32 — Host (1)</option>
@@ -155,6 +225,7 @@ export default function Panel() {
                   onChange={(e) => setPort(e.target.value)}
                   placeholder="80" 
                   className="mono"
+                  disabled={!hasPlan}
                   style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px' }}
                 />
               </div>
@@ -162,13 +233,17 @@ export default function Panel() {
 
             {/* Duration Input */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>DURATION (SECONDS)</label>
+              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>DURATION (MAX {maxDuration}s)</label>
               <input 
                 type="number" 
                 value={time}
-                onChange={(e) => setTime(e.target.value)}
-                placeholder="010" 
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setTime(val > maxDuration ? maxDuration : val);
+                }}
+                placeholder="60" 
                 className="mono"
+                disabled={!hasPlan}
                 style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px' }}
               />
             </div>
@@ -182,6 +257,7 @@ export default function Panel() {
               <select 
                 value={method} 
                 onChange={(e) => setMethod(e.target.value)}
+                disabled={!hasPlan}
                 style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', color: '#fff' }}
               >
                 <option value="" disabled>Select attack method...</option>
@@ -203,7 +279,7 @@ export default function Panel() {
             {/* Concurrents Input & Slider */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', margin: 0 }}>CONCURRENTS</label>
+                <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', margin: 0 }}>CONCURRENTS (MAX {maxConns})</label>
                 <input 
                   type="number" 
                   min="1"
@@ -222,6 +298,7 @@ export default function Panel() {
                   }}
                   placeholder="1"
                   className="mono"
+                  disabled={!hasPlan}
                   style={{ 
                     background: '#000', 
                     border: '1px solid var(--border-color)', 
@@ -236,9 +313,10 @@ export default function Panel() {
               <input 
                 type="range" 
                 min="1" 
-                max={maxConns} 
+                max={maxConns || 1} 
                 value={conns || 1}
                 onChange={(e) => setConns(Number(e.target.value))}
+                disabled={!hasPlan}
                 style={{ height: '2px', background: '#333', marginTop: '8px', marginBottom: '4px' }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
@@ -257,12 +335,12 @@ export default function Panel() {
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 color: '#fff',
                 fontWeight: 600,
-                opacity: (!target || !method || isAttacking) ? 0.5 : 1,
+                opacity: (!target || !method || isAttacking || !hasPlan) ? 0.5 : 1,
                 transition: 'all 0.2s',
                 marginTop: '8px'
               }}
               onClick={handleLaunchAttack}
-              disabled={!target || !method || isAttacking}
+              disabled={!target || !method || isAttacking || !hasPlan}
             >
               <Send size={14} /> {isAttacking ? 'Launching...' : 'Launch Attack'}
             </button>
