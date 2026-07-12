@@ -18,6 +18,7 @@ export default function AppLayout() {
     { name: 'Panel', path: '/panel', icon: <Terminal size={14} /> },
     { name: 'API', path: '/apis', icon: <Globe size={14} /> },
     { name: 'Store', path: '/store', icon: <ShoppingCart size={14} /> },
+    { name: 'Deposit', path: '/deposit', icon: <Wallet size={14} /> },
     { name: 'FAQ', path: '/faq', icon: <HelpCircle size={14} /> },
   ];
 
@@ -137,8 +138,8 @@ export default function AppLayout() {
 
           <div style={{ width: '1px', height: '20px', background: 'var(--border-color)', margin: '0 8px' }}></div>
 
-          <a href="#" className="btn btn-outline" style={{ padding: '6px 12px' }}>
-            <Send size={14} /> @incarnativating
+          <a href="https://t.me/incanativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '6px 12px' }}>
+            <Send size={14} /> @incanativating
           </a>
           
           <button className="btn btn-primary" style={{ padding: '6px 12px', gap: '6px' }}>

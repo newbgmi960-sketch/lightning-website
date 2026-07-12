@@ -7,6 +7,7 @@ import Panel from './pages/Panel';
 import ApiManager from './pages/ApiManager';
 import Store from './pages/Store';
 import Profile from './pages/Profile';
+import Deposit from './pages/Deposit';
 import AppLayout from './components/AppLayout';
 import './index.css';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/apis" element={<ApiManager />} />
           <Route path="/store" element={<Store />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/deposit" element={<Deposit />} />
         </Route>
       </Routes>
     </Router>
