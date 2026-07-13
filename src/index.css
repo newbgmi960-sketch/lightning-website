@@ -367,30 +367,24 @@ input[type=range]::-webkit-slider-thumb {
 
 @media (max-width: 1024px) {
   .dashboard-header {
-    flex-direction: column;
+    flex-direction: row; /* keep it row on mobile to have brand left, menu right */
     gap: 16px;
     padding: 16px;
-    align-items: stretch;
+    align-items: center;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
   }
 
   .dashboard-left {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .dashboard-nav {
-    width: 100%;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .dashboard-right {
-    justify-content: space-between;
-    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
   }
 }
 

@@ -79,7 +79,7 @@ export default function Deposit() {
           </div>
 
           <a 
-            href="https://t.me/incanativating" 
+            href="https://t.me/incarnativating" 
             target="_blank" 
             rel="noopener noreferrer"
             className="btn btn-primary" 
@@ -96,7 +96,7 @@ export default function Deposit() {
               textDecoration: 'none'
             }}
           >
-            <Send size={16} /> Contact Admin @incanativating
+            <Send size={16} /> Contact Admin @incarnativating
           </a>
         </div>
 

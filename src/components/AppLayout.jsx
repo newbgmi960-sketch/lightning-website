@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Command, Loader, Shield } from 'lucide-react';
+import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Command, Loader, Shield, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 
@@ -12,6 +12,12 @@ export default function AppLayout() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0.00);
   const [activePlan, setActivePlan] = useState('None');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   let navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={14} /> },
@@ -88,7 +94,7 @@ export default function AppLayout() {
             <span style={{ fontWeight: 700, fontSize: '1rem', color: '#fff', letterSpacing: '-0.025em' }}>Lightning</span>
           </div>
 
-          <nav className="dashboard-nav">
+          <nav className="dashboard-nav desktop-only">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -131,7 +137,7 @@ export default function AppLayout() {
         </div>
 
         {/* Right: Actions & Profile */}
-        <div className="dashboard-right">
+        <div className="dashboard-right desktop-only">
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
@@ -140,8 +146,8 @@ export default function AppLayout() {
 
           <div style={{ width: '1px', height: '20px', background: 'var(--border-color)', margin: '0 8px' }}></div>
 
-          <a href="https://t.me/incanativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '6px 12px' }}>
-            <Send size={14} /> @incanativating
+          <a href="https://t.me/incarnativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '6px 12px' }}>
+            <Send size={14} /> @incarnativating
           </a>
           
           <button className="btn btn-primary" style={{ padding: '6px 12px', gap: '6px' }}>
@@ -185,8 +191,97 @@ export default function AppLayout() {
               </div>
             )}
           </div>
+          
+          {/* Mobile Menu Button */}
+          <button 
+            className="mobile-menu-btn"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            style={{ 
+              display: 'none', 
+              background: 'transparent', 
+              border: 'none', 
+              color: '#fff', 
+              cursor: 'pointer',
+              padding: '4px'
+            }}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="mobile-menu"
+            style={{
+              position: 'fixed',
+              top: '64px', // height of header
+              left: 0,
+              right: 0,
+              background: 'rgba(10, 10, 10, 0.98)',
+              backdropFilter: 'blur(12px)',
+              borderBottom: '1px solid var(--border-color)',
+              padding: '24px',
+              zIndex: 40,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '24px'
+            }}
+          >
+            {/* Mobile Nav */}
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <NavLink 
+                    key={item.name} 
+                    to={item.path}
+                    style={{ 
+                      padding: '12px 16px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '12px',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      color: isActive ? '#fff' : 'var(--text-secondary)',
+                      textDecoration: 'none',
+                      borderRadius: '12px',
+                      background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
+                      border: isActive ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
+                    }}
+                  >
+                    {item.icon} {item.name}
+                  </NavLink>
+                );
+              })}
+            </nav>
+
+            <div style={{ height: '1px', background: 'var(--border-color)' }}></div>
+
+            {/* Mobile Actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '0 8px' }}>
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
+                3 online
+              </div>
+              
+              <button className="btn btn-primary" style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
+                <Wallet size={16} /> Balance: ${balance.toFixed(2)}
+              </button>
+
+              <a href="https://t.me/incarnativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
+                <Send size={16} /> Contact @incarnativating
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: '40px 24px', overflowY: 'auto' }}>

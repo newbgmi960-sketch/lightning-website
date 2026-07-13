@@ -21,17 +21,17 @@ export default function Store() {
     {
       name: 'BASIC #1',
       price: 28.00,
-      features: ['Up to 2 concurrent', '1200 seconds max time', 'Basic Layer 4 Methods', 'Basic Layer 7 Methods', 'Normal Network priority']
+      features: ['Up to 2 concurrent', '1200 seconds max time', 'Basic Layer 4 Methods', 'Normal Network priority']
     },
     {
       name: 'BASIC #2',
       price: 44.00,
-      features: ['Up to 3 concurrent', '1200 seconds max time', 'Basic Layer 4 Methods', 'Basic Layer 7 Methods', 'Normal Network priority']
+      features: ['Up to 3 concurrent', '1200 seconds max time', 'Basic Layer 4 Methods', 'Normal Network priority']
     },
     {
       name: 'ADVANCED #1',
       price: 69.00,
-      features: ['Up to 5 concurrent', '1200 seconds max time', 'Premium Layer 4 Methods', 'Premium Layer 7 Methods', 'High Network priority', 'API Access']
+      features: ['Up to 5 concurrent', '1200 seconds max time', 'Premium Layer 4 Methods', 'High Network priority', 'API Access']
     },
     {
       name: 'ADVANCED #2',
@@ -154,7 +154,7 @@ export default function Store() {
         Pricing
       </h1>
       <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '32px', textAlign: 'center' }}>
-        Choose the plan that fits your needs — normal, L7 only, or fully custom.
+        Choose the plan that fits your needs.
       </p>
 
       {message.text && (
@@ -192,7 +192,7 @@ export default function Store() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', background: '#0a0a0a', border: '1px solid var(--border-color)', borderRadius: '32px', padding: '4px', marginBottom: '32px' }}>
+      <div style={{ display: 'none', background: '#0a0a0a', border: '1px solid var(--border-color)', borderRadius: '32px', padding: '4px', marginBottom: '32px' }}>
         <button 
           onClick={() => setActiveTab('normal')}
           style={{
@@ -203,28 +203,6 @@ export default function Store() {
           }}
         >
           Normal Plans
-        </button>
-        <button 
-          onClick={() => setActiveTab('l7')}
-          style={{
-            padding: '8px 24px', borderRadius: '28px', border: 'none', 
-            background: activeTab === 'l7' ? 'rgba(255,255,255,0.1)' : 'transparent',
-            color: activeTab === 'l7' ? '#fff' : 'var(--text-secondary)',
-            fontWeight: 600, fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s ease'
-          }}
-        >
-          L7 Plans
-        </button>
-        <button 
-          onClick={() => setActiveTab('custom')}
-          style={{
-            padding: '8px 24px', borderRadius: '28px', border: 'none', 
-            background: activeTab === 'custom' ? 'rgba(255,255,255,0.1)' : 'transparent',
-            color: activeTab === 'custom' ? '#fff' : 'var(--text-secondary)',
-            fontWeight: 600, fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s ease'
-          }}
-        >
-          Custom Plan
         </button>
       </div>
 
