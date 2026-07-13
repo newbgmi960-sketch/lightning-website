@@ -92,8 +92,7 @@ export default function Panel() {
     // Hit the L4 API if layer is L4
     if (layer === 'L4') {
       try {
-        // You can replace "YOUR_API_KEY" with your actual RetroStress API key.
-        const apiKey = "YOUR_API_KEY"; 
+        const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
         const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${method}&concurrent=${finalConns}`;
         
         // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
