@@ -211,17 +211,9 @@ export default function Panel() {
                   className={`toggle-btn ${layer === 'L4' ? 'active' : ''}`}
                   onClick={() => hasPlan && setLayer('L4')}
                   disabled={!hasPlan}
-                  style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
+                  style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600, width: '100%' }}
                 >
                   LAYER 4 - UDP
-                </button>
-                <button 
-                  className={`toggle-btn ${layer === 'L7' ? 'active' : ''}`}
-                  onClick={() => hasPlan && setLayer('L7')}
-                  disabled={!hasPlan}
-                  style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
-                >
-                  LAYER 7 - HTTP
                 </button>
               </div>
             </div>
@@ -475,34 +467,6 @@ export default function Panel() {
                         <span className="mono" style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem' }}>
                           {formatTimeLeft(task.timeLeft)}
                         </span>
-                        {/* Stop Button */}
-                        <button 
-                          onClick={() => handleStopAttack(task.id)}
-                          style={{ 
-                            background: 'rgba(239, 68, 68, 0.1)', 
-                            border: '1px solid rgba(239, 68, 68, 0.2)', 
-                            borderRadius: '6px', 
-                            padding: '6px', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            cursor: 'pointer',
-                            color: '#f87171',
-                            transition: 'all 0.2s',
-                            marginLeft: '4px'
-                          }}
-                          title="Stop Attack"
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
-                            e.currentTarget.style.color = '#ef4444';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-                            e.currentTarget.style.color = '#f87171';
-                          }}
-                        >
-                          <Square size={10} fill="#f87171" style={{ strokeWidth: 0 }} />
-                        </button>
                       </div>
                     </div>
 

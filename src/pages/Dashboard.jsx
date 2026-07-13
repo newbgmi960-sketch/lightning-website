@@ -219,16 +219,6 @@ export default function Dashboard() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Layer 7 Network</div>
-                <div className="mono" style={{ fontSize: '0.75rem', color: '#fff' }}>0 / {planInfo.name !== 'None' ? '100' : '0'}</div>
-              </div>
-              <div style={{ height: '4px', background: '#222', borderRadius: '2px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: '0%', background: '#fff', borderRadius: '2px' }}></div>
-              </div>
-            </div>
-
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Layer 4 Network</div>
                 <div className="mono" style={{ fontSize: '0.75rem', color: '#fff' }}>0 / {planInfo.name !== 'None' ? '40' : '0'}</div>
               </div>
