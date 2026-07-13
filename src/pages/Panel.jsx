@@ -381,7 +381,7 @@ export default function Panel() {
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
-                      {['UDP-RAND', 'UDP-PPS', 'UDP-TINY', 'UDP-BIG', 'CLDAP', 'BGMI'].map((m) => (
+                      {['UDP-PPS', 'UDP-TINY', 'UDP-BIG', 'BGMI'].map((m) => (
                         <div 
                           key={m}
                           onClick={() => {
