@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Send, Search, ShieldAlert, Cpu, Activity, Settings, Info, Zap, Square, Loader } from 'lucide-react';
+import { Terminal, Send, Search, ShieldAlert, Cpu, Activity, Settings, Info, Zap, Square, Loader, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
@@ -14,9 +14,10 @@ export default function Panel() {
   const [isAttacking, setIsAttacking] = useState(false);
   const [activeTasks, setActiveTasks] = useState([]);
   const [apiError, setApiError] = useState(null);
-  
   const [activePlan, setActivePlan] = useState('None');
   const [loadingPlan, setLoadingPlan] = useState(true);
+  const [isMethodDropdownOpen, setIsMethodDropdownOpen] = useState(false);
+  const [isSubnetDropdownOpen, setIsSubnetDropdownOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -235,18 +236,72 @@ export default function Panel() {
             <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '16px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>SUBNET</label>
-                <select 
-                  value={subnet} 
-                  onChange={(e) => setSubnet(e.target.value)}
-                  disabled={!hasPlan}
-                  style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', color: '#fff' }}
+                <div style={{ position: 'relative' }}>
+                <div 
+                  onClick={() => hasPlan && setIsSubnetDropdownOpen(!isSubnetDropdownOpen)}
+                  style={{ 
+                    background: '#000', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: '8px', 
+                    padding: '10px 12px', 
+                    color: subnet ? '#fff' : 'var(--text-secondary)',
+                    cursor: hasPlan ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    userSelect: 'none',
+                    width: '100%'
+                  }}
                 >
-                  <option value="/32 — Host (1)">/32 — Host (1)</option>
-                  <option value="/24 — Subnet (256)">/24 — Subnet (256)</option>
-                  <option value="/16 — Subnet (65536)">/16 — Subnet (65536)</option>
-                </select>
+                  {subnet}
+                  <ChevronDown size={16} color="var(--text-secondary)" style={{ transform: isSubnetDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                </div>
+
+                {isSubnetDropdownOpen && (
+                  <>
+                    <div 
+                      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }}
+                      onClick={() => setIsSubnetDropdownOpen(false)}
+                    ></div>
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      marginTop: '4px',
+                      background: '#111',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      zIndex: 20,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                    }}>
+                      {['/32 — Host (1)', '/24 — Subnet (256)', '/16 — Subnet (65536)'].map((s) => (
+                        <div 
+                          key={s}
+                          onClick={() => {
+                            setSubnet(s);
+                            setIsSubnetDropdownOpen(false);
+                          }}
+                          style={{
+                            padding: '10px 12px',
+                            color: '#fff',
+                            cursor: 'pointer',
+                            background: subnet === s ? 'rgba(255,255,255,0.05)' : 'transparent',
+                            borderBottom: '1px solid rgba(255,255,255,0.02)'
+                          }}
+                          onMouseEnter={(e) => { if(subnet !== s) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                          onMouseLeave={(e) => { if(subnet !== s) e.currentTarget.style.background = 'transparent' }}
+                        >
+                          {s}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-              <div>
+            </div>
+            <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>PORT</label>
                 <input 
                   type="number" 
@@ -283,29 +338,69 @@ export default function Panel() {
                 <label style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', margin: 0 }}>ATTACK METHOD</label>
                 <Info size={12} color="var(--text-muted)" style={{ cursor: 'pointer' }} />
               </div>
-              <select 
-                value={method} 
-                onChange={(e) => setMethod(e.target.value)}
-                disabled={!hasPlan}
-                style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', color: '#fff' }}
-              >
-                <option value="" disabled>Select attack method...</option>
-                {layer === 'L4' ? (
+              <div style={{ position: 'relative' }}>
+                <div 
+                  onClick={() => hasPlan && setIsMethodDropdownOpen(!isMethodDropdownOpen)}
+                  style={{ 
+                    background: '#000', 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: '8px', 
+                    padding: '10px 12px', 
+                    color: method ? '#fff' : 'var(--text-secondary)',
+                    cursor: hasPlan ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    userSelect: 'none'
+                  }}
+                >
+                  {method || 'Select attack method...'}
+                  <ChevronDown size={16} color="var(--text-secondary)" style={{ transform: isMethodDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                </div>
+
+                {isMethodDropdownOpen && (
                   <>
-                    <option value="UDP-RAND">UDP-RAND</option>
-                    <option value="UDP-PPS">UDP-PPS</option>
-                    <option value="UDP-TINY">UDP-TINY</option>
-                    <option value="UDP-BIG">UDP-BIG</option>
-                    <option value="CLDAP">CLDAP</option>
-                    <option value="BGMI">BGMI</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="bypass">Bypass</option>
-                    <option value="h2">H2</option>
+                    <div 
+                      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }}
+                      onClick={() => setIsMethodDropdownOpen(false)}
+                    ></div>
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      marginTop: '4px',
+                      background: '#111',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      zIndex: 20,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                    }}>
+                      {['UDP-RAND', 'UDP-PPS', 'UDP-TINY', 'UDP-BIG', 'CLDAP', 'BGMI'].map((m) => (
+                        <div 
+                          key={m}
+                          onClick={() => {
+                            setMethod(m);
+                            setIsMethodDropdownOpen(false);
+                          }}
+                          style={{
+                            padding: '10px 12px',
+                            color: '#fff',
+                            cursor: 'pointer',
+                            background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
+                            borderBottom: '1px solid rgba(255,255,255,0.02)'
+                          }}
+                          onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                          onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
+                        >
+                          {m}
+                        </div>
+                      ))}
+                    </div>
                   </>
                 )}
-              </select>
+              </div>
             </div>
 
             {/* Concurrents Input & Slider */}
