@@ -28,8 +28,8 @@ export default function AppLayout() {
   useEffect(() => {
     let mounted = true;
 
-    // Check session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check session and force refresh to get latest metadata from DB
+    supabase.auth.refreshSession().then(({ data: { session } }) => {
       if (!mounted) return;
       if (!session) {
         navigate('/login');
