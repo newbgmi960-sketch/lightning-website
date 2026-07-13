@@ -31,9 +31,9 @@ export default function Panel() {
   const getPlanLimits = (planName) => {
     const name = (planName || 'None').toUpperCase();
     if (name.includes('STARTER')) return { name: 'Starter #1', concurrents: 1, duration: 60 };
-    if (name.includes('BASIC #1')) return { name: 'Basic #1', concurrents: 2, duration: 1200 };
-    if (name.includes('BASIC #2')) return { name: 'Basic #2', concurrents: 3, duration: 1200 };
-    if (name.includes('ADVANCED #1')) return { name: 'Advanced #1', concurrents: 5, duration: 1200 };
+    if (name.includes('BASIC #1')) return { name: 'Basic #1', concurrents: 2, duration: 120 };
+    if (name.includes('BASIC #2')) return { name: 'Basic #2', concurrents: 3, duration: 300 };
+    if (name.includes('ADVANCED #1')) return { name: 'Advanced #1', concurrents: 5, duration: 500 };
     if (name.includes('ADVANCED #2')) return { name: 'Advanced #2', concurrents: 8, duration: 800 };
     if (name.includes('PROFESSIONAL #1')) return { name: 'Professional #1', concurrents: 10, duration: 1200 };
     if (name.includes('PROFESSIONAL #2')) return { name: 'Professional #2', concurrents: 13, duration: 1500 };

@@ -21,17 +21,17 @@ export default function Store() {
     {
       name: 'BASIC #1',
       price: 28.00,
-      features: ['Up to 2 concurrent', '1200 seconds max time', 'Basic Layer 4 Methods', 'Normal Network priority']
+      features: ['Up to 2 concurrent', '120s max time', 'Basic Layer 4 Methods', 'Normal Network priority']
     },
     {
       name: 'BASIC #2',
       price: 44.00,
-      features: ['Up to 3 concurrent', '1200 seconds max time', 'Basic Layer 4 Methods', 'Normal Network priority']
+      features: ['Up to 3 concurrent', '300s max time', 'Basic Layer 4 Methods', 'Normal Network priority']
     },
     {
       name: 'ADVANCED #1',
       price: 69.00,
-      features: ['Up to 5 concurrent', '1200 seconds max time', 'Premium Layer 4 Methods', 'High Network priority', 'API Access']
+      features: ['Up to 5 concurrent', '500s max time', 'Premium Layer 4 Methods', 'High Network priority', 'API Access']
     },
     {
       name: 'ADVANCED #2',
