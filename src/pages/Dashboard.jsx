@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [balance, setBalance] = useState(0.00);
   const [activePlan, setActivePlan] = useState('None');
   const [expiry, setExpiry] = useState('N/A');
+  const [totalUsers, setTotalUsers] = useState(0);
 
   // Realistic changing live numbers
   const [runningAttacks, setRunningAttacks] = useState(0);
@@ -38,6 +39,13 @@ export default function Dashboard() {
         if (rawExpiry) {
           setExpiry(new Date(rawExpiry).toLocaleDateString());
         }
+      }
+    });
+
+    // Fetch real user count from DB
+    supabase.rpc('get_total_users_count').then(({ data, error }) => {
+      if (!error && data !== null) {
+        setTotalUsers(data);
       }
     });
   }, []);
@@ -122,7 +130,7 @@ export default function Dashboard() {
             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Total Users</span>
             <Users size={16} color="var(--text-muted)" />
           </div>
-          <div className="mono" style={{ fontSize: '2rem', fontWeight: 500, color: '#fff' }}>747</div>
+          <div className="mono" style={{ fontSize: '2rem', fontWeight: 500, color: '#fff' }}>{totalUsers}</div>
         </div>
       </div>
 
