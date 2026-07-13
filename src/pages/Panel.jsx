@@ -272,7 +272,8 @@ export default function Panel() {
                       background: '#111',
                       border: '1px solid var(--border-color)',
                       borderRadius: '8px',
-                      overflow: 'hidden',
+                      overflowY: 'auto',
+                      maxHeight: '200px',
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
@@ -373,7 +374,8 @@ export default function Panel() {
                       background: '#111',
                       border: '1px solid var(--border-color)',
                       borderRadius: '8px',
-                      overflow: 'hidden',
+                      overflowY: 'auto',
+                      maxHeight: '200px',
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
