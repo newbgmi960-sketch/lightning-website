@@ -152,67 +152,66 @@ export default function AppLayout() {
         </div>
 
         {/* Right: Actions & Profile */}
-        <div className="dashboard-right desktop-only">
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
-            {onlineCount} online
-          </div>
+        <div className="dashboard-right">
+          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
+              {onlineCount} online
+            </div>
 
-          <div style={{ width: '1px', height: '20px', background: 'var(--border-color)', margin: '0 8px' }}></div>
+            <div style={{ width: '1px', height: '20px', background: 'var(--border-color)', margin: '0 8px' }}></div>
 
-          <a href="https://t.me/incarnativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '6px 12px' }}>
-            <Send size={14} /> @incarnativating
-          </a>
-          
-          <button className="btn btn-primary" style={{ padding: '6px 12px', gap: '6px' }}>
-            <Wallet size={14} /> ${balance.toFixed(2)}
-          </button>
-
-          {/* Profile Dropdown */}
-          <div style={{ position: 'relative' }}>
-            <button 
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              style={{ 
-                width: '32px', height: '32px', borderRadius: '50%', 
-                background: '#222', border: '1px solid var(--border-color)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#fff', fontSize: '0.875rem', fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              {initials}
-            </button>
+            <a href="https://t.me/incarnativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '6px 12px' }}>
+              <Send size={14} /> @incarnativating
+            </a>
             
-            {isProfileOpen && (
-              <div style={{ 
-                position: 'absolute', top: '100%', right: 0, marginTop: '8px',
-                width: '200px', background: 'var(--panel-bg)', border: '1px solid var(--border-color)',
-                borderRadius: '8px', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
-                zIndex: 100
-              }}>
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-color)' }}>
-                  <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{username}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{activePlan}</div>
+            <button className="btn btn-primary" style={{ padding: '6px 12px', gap: '6px' }}>
+              <Wallet size={14} /> ${balance.toFixed(2)}
+            </button>
+
+            {/* Profile Dropdown */}
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                style={{ 
+                  width: '32px', height: '32px', borderRadius: '50%', 
+                  background: '#222', border: '1px solid var(--border-color)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: '0.875rem', fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                {initials}
+              </button>
+              
+              {isProfileOpen && (
+                <div style={{ 
+                  position: 'absolute', top: '100%', right: 0, marginTop: '8px',
+                  width: '200px', background: 'var(--panel-bg)', border: '1px solid var(--border-color)',
+                  borderRadius: '8px', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
+                  zIndex: 100
+                }}>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-color)' }}>
+                    <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{username}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{activePlan}</div>
+                  </div>
+                  <div style={{ padding: '4px' }}>
+                    <button className="nav-link" style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/profile')}>
+                      <User size={14} /> Profile Settings
+                    </button>
+                    <button className="nav-link" style={{ width: '100%', border: 'none', background: 'transparent', color: '#ef4444', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={handleSignOut}>
+                      <LogOut size={14} /> Sign Out
+                    </button>
+                  </div>
                 </div>
-                <div style={{ padding: '4px' }}>
-                  <button className="nav-link" style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/profile')}>
-                    <User size={14} /> Profile Settings
-                  </button>
-                  <button className="nav-link" style={{ width: '100%', border: 'none', background: 'transparent', color: '#ef4444', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={handleSignOut}>
-                    <LogOut size={14} /> Sign Out
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           
-          {/* Mobile Menu Button */}
           <button 
             className="mobile-menu-btn"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             style={{ 
-              display: 'none', 
               background: 'transparent', 
               border: 'none', 
               color: '#fff', 

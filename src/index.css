@@ -365,6 +365,10 @@ input[type=range]::-webkit-slider-thumb {
   gap: 16px;
 }
 
+.mobile-menu-btn {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .dashboard-header {
     flex-direction: row; /* keep it row on mobile to have brand left, menu right */
