@@ -18,7 +18,6 @@ export default function AppLayout() {
     { name: 'Panel', path: '/panel', icon: <Terminal size={14} /> },
     { name: 'Store', path: '/store', icon: <ShoppingCart size={14} /> },
     { name: 'Deposit', path: '/deposit', icon: <Wallet size={14} /> },
-    { name: 'FAQ', path: '/faq', icon: <HelpCircle size={14} /> },
   ];
 
   if (user && user.email === 'sagar@lightning.lat') {
