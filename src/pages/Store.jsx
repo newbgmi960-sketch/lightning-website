@@ -81,22 +81,8 @@ export default function Store() {
     setMessage({ text: '', type: '' });
 
     const cleanCode = promoCode.trim().toUpperCase();
-    if (cleanCode === 'TEST100') {
-      const newBalance = balance + 100.00;
-      const { data, error } = await supabase.auth.updateUser({
-        data: { balance: newBalance }
-      });
-
-      if (error) {
-        setMessage({ text: error.message, type: 'error' });
-      } else {
-        setBalance(newBalance);
-        setMessage({ text: 'Promo code applied! $100.00 added to your balance.', type: 'success' });
-        setPromoCode('');
-      }
-    } else {
-      setMessage({ text: 'Invalid promo code.', type: 'error' });
-    }
+    // No active promo codes currently
+    setMessage({ text: 'Invalid promo code.', type: 'error' });
     setPromoLoading(false);
   };
 
