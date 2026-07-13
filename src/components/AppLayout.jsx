@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Command, Loader } from 'lucide-react';
+import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Command, Loader, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 
@@ -13,13 +13,17 @@ export default function AppLayout() {
   const [balance, setBalance] = useState(0.00);
   const [activePlan, setActivePlan] = useState('None');
 
-  const navItems = [
+  let navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={14} /> },
     { name: 'Panel', path: '/panel', icon: <Terminal size={14} /> },
     { name: 'Store', path: '/store', icon: <ShoppingCart size={14} /> },
     { name: 'Deposit', path: '/deposit', icon: <Wallet size={14} /> },
     { name: 'FAQ', path: '/faq', icon: <HelpCircle size={14} /> },
   ];
+
+  if (user && user.email === 'sagar@lightning.lat') {
+    navItems.push({ name: 'Admin', path: '/admin', icon: <Shield size={14} /> });
+  }
 
   useEffect(() => {
     let mounted = true;

@@ -7,6 +7,7 @@ import Panel from './pages/Panel';
 import Store from './pages/Store';
 import Profile from './pages/Profile';
 import Deposit from './pages/Deposit';
+import Admin from './pages/Admin';
 import AppLayout from './components/AppLayout';
 import './index.css';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/store" element={<Store />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/deposit" element={<Deposit />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
       </Routes>
     </Router>
