@@ -13,6 +13,21 @@ export default function AppLayout() {
   const [balance, setBalance] = useState(0.00);
   const [activePlan, setActivePlan] = useState('None');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [onlineCount, setOnlineCount] = useState(15);
+
+  useEffect(() => {
+    setOnlineCount(Math.floor(Math.random() * 20) + 15);
+    const interval = setInterval(() => {
+      setOnlineCount(prev => {
+        const change = Math.floor(Math.random() * 5) - 2;
+        const newCount = prev + change;
+        if (newCount < 10) return 10 + Math.floor(Math.random() * 3);
+        if (newCount > 45) return 45 - Math.floor(Math.random() * 3);
+        return newCount;
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -141,7 +156,7 @@ export default function AppLayout() {
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
-            3 online
+            {onlineCount} online
           </div>
 
           <div style={{ width: '1px', height: '20px', background: 'var(--border-color)', margin: '0 8px' }}></div>
@@ -268,7 +283,7 @@ export default function AppLayout() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '0 8px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
-                3 online
+                {onlineCount} online
               </div>
               
               <button className="btn btn-primary" style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
