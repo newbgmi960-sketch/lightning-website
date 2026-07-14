@@ -45,6 +45,9 @@ export default function Panel() {
 
   const planLimits = getPlanLimits(activePlan);
   const maxConns = planLimits.concurrents;
+  const concurrentProgress = maxConns > 1
+    ? Math.min(100, Math.max(0, ((Number(conns) - 1) / (maxConns - 1)) * 100))
+    : (maxConns === 1 ? 100 : 0);
   const maxDuration = planLimits.duration;
   const hasPlan = planLimits.name !== 'None';
 
@@ -441,15 +444,19 @@ export default function Panel() {
                   }}
                 />
               </div>
-              <input 
-                type="range" 
-                min="1" 
-                max={maxConns || 1} 
-                value={conns || 1}
-                onChange={(e) => setConns(Number(e.target.value))}
-                disabled={!hasPlan}
-                style={{ height: '2px', background: '#333', marginTop: '8px', marginBottom: '4px' }}
-              />
+              <div className="concurrency-slider" style={{ '--concurrent-progress': `${concurrentProgress}%` }}>
+                <div className="concurrency-slider-fill" aria-hidden="true" />
+                <input 
+                  className="concurrency-range"
+                  type="range" 
+                  min="1" 
+                  max={maxConns || 1} 
+                  value={conns || 1}
+                  onChange={(e) => setConns(Number(e.target.value))}
+                  disabled={!hasPlan}
+                  aria-label="Concurrent operations"
+                />
+              </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
                 <span>1</span>
                 <span>{maxConns}</span>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Command, Loader, Shield, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Zap, Loader, Shield, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 
@@ -102,11 +102,9 @@ export default function AppLayout() {
         
         {/* Left: Brand & Nav */}
         <div className="dashboard-left">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
-            <div style={{ width: '24px', height: '24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               <Command size={14} color="#fff" />
-            </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', color: '#fff', letterSpacing: '-0.025em' }}>Lightning</span>
+          <div className="app-brand" onClick={() => navigate('/dashboard')} role="button" tabIndex={0} onKeyDown={(event) => event.key === 'Enter' && navigate('/dashboard')}>
+            <div className="app-brand-mark"><Zap size={15} fill="currentColor" /></div>
+            <span>lightning<b>bot</b></span>
           </div>
 
           <nav className="dashboard-nav desktop-only">
