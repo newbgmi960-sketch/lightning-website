@@ -152,7 +152,7 @@ export default function Profile() {
           Link your Telegram so we can reach you about your plan, account, and important updates.
         </p>
 
-        <div className="telegram-status" style={{ 
+        <div className="telegram-status" style={{
           background: 'rgba(16, 185, 129, 0.1)', 
           border: '1px solid rgba(16, 185, 129, 0.2)', 
           borderRadius: '8px', 
@@ -167,7 +167,7 @@ export default function Profile() {
             </div>
             <div>
               <div style={{ fontWeight: 500, color: '#fff', fontSize: '0.875rem' }}>Connected</div>
-              <div className="mono" style={{ color: '#10b981', fontSize: '0.875rem' }}>@ppslegend</div>
+              <div style={{ color: '#10b981', fontSize: '0.8rem' }}>Account contact enabled</div>
             </div>
           </div>
           
