@@ -524,13 +524,9 @@ export default function Panel() {
             </div>
 
             {/* Filters */}
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <select style={{ width: 'auto', padding: '4px 24px 4px 12px', fontSize: '0.75rem', background: '#000', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-secondary)' }}>
-                <option>All Layers</option>
-              </select>
-              <select style={{ width: 'auto', padding: '4px 24px 4px 12px', fontSize: '0.75rem', background: '#000', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-secondary)' }}>
-                <option>Sort by Time Left</option>
-              </select>
+            <div className="task-filters" aria-label="Task filters">
+              <span className="task-filter"><span>All layers</span><ChevronDown size={14} /></span>
+              <span className="task-filter"><span>Time remaining</span><ChevronDown size={14} /></span>
             </div>
 
             {/* Cards List wrapper */}
