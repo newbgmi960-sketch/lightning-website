@@ -80,10 +80,10 @@ export default function Profile() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '800px', margin: '0 auto', paddingTop: '40px', paddingBottom: '80px', gap: '24px' }}>
+    <div className="profile-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '800px', margin: '0 auto', paddingTop: '40px', paddingBottom: '80px', gap: '24px' }}>
       
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+      <div className="profile-header" style={{ textAlign: 'center', marginBottom: '16px' }}>
         <h1 style={{
           fontSize: '3rem',
           fontWeight: 800,
@@ -122,7 +122,7 @@ export default function Profile() {
       <div className="panel" style={{ width: '100%', padding: '24px' }}>
         <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#fff', marginBottom: '24px' }}>Plan Details</h3>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }} className="dashboard-stats-grid">
+        <div className="profile-plan-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           <div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px' }}>PLAN</div>
             <div style={{ fontWeight: 600, color: '#fff', fontSize: '1rem' }}>{planInfo.name}</div>
@@ -152,7 +152,7 @@ export default function Profile() {
           Link your Telegram so we can reach you about your plan, account, and important updates.
         </p>
 
-        <div style={{ 
+        <div className="telegram-status" style={{ 
           background: 'rgba(16, 185, 129, 0.1)', 
           border: '1px solid rgba(16, 185, 129, 0.2)', 
           borderRadius: '8px', 
@@ -178,7 +178,7 @@ export default function Profile() {
       </div>
 
       {/* Bottom Grid: Password & Danger Zone */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', width: '100%' }}>
+      <div className="profile-bottom-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', width: '100%' }}>
         
         {/* Change Password */}
         <form onSubmit={handleUpdatePassword} className="panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
