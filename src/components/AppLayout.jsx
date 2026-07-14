@@ -50,26 +50,48 @@ export default function AppLayout() {
 
     // Check session and force refresh to get latest metadata from DB
     supabase.auth.refreshSession().then(({ data: { session } }) => {
-      if (!mounted) return;
-      if (!session) {
-        navigate('/login');
-      } else {
+      if (session?.user) {
         setUser(session.user);
         setBalance(session.user.user_metadata?.balance ?? 0.00);
         setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
         setLoading(false);
+
+        // Auto-upgrade owner to Lightning Owner plan if not set
+        if (session.user.email === 'sagar@lightning.lat' && session.user.user_metadata?.active_plan !== 'Lightning Owner') {
+          supabase.auth.updateUser({
+            data: { active_plan: 'Lightning Owner' }
+          }).then(({ data }) => {
+            if (data?.user && mounted) {
+              setUser(data.user);
+              setActivePlan('Lightning Owner');
+            }
+          });
+        }
+      } else {
+        navigate('/login');
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
-      if (!session) {
-        navigate('/login');
-      } else {
+      if (session?.user) {
         setUser(session.user);
         setBalance(session.user.user_metadata?.balance ?? 0.00);
         setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
         setLoading(false);
+
+        // Auto-upgrade owner to Lightning Owner plan if not set
+        if (session.user.email === 'sagar@lightning.lat' && session.user.user_metadata?.active_plan !== 'Lightning Owner') {
+          supabase.auth.updateUser({
+            data: { active_plan: 'Lightning Owner' }
+          }).then(({ data }) => {
+            if (data?.user && mounted) {
+              setUser(data.user);
+              setActivePlan('Lightning Owner');
+            }
+          });
+        }
+      } else {
+        navigate('/login');
       }
     });
 
