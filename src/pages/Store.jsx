@@ -121,10 +121,10 @@ export default function Store() {
         marginBottom: '16px',
         letterSpacing: '-0.05em'
       }}>
-          Infrastructure monitoring
+          Lightning Memberships
       </h1>
       <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '32px', textAlign: 'center' }}>
-        Pick your rank. Every plan includes monitoring for two endpoints; longer access unlocks better value.
+        Choose your rank and unlock a polished workspace experience with the access period that fits your needs.
       </p>
 
       {message.text && (
