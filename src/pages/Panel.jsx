@@ -308,7 +308,7 @@ export default function Panel() {
             </div>
             <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>PORT</label>
-                <input 
+                <input
                   type="number" 
                   value={port}
                   onChange={(e) => setPort(e.target.value)}
@@ -448,9 +448,9 @@ export default function Panel() {
                 <div className="concurrency-slider-fill" aria-hidden="true" />
                 <input 
                   className="concurrency-range"
-                  type="range" 
-                  min="1" 
-                  max={maxConns || 1} 
+                  type="range"
+                  min="1"
+                  max={maxConns || 1}
                   value={conns || 1}
                   onChange={(e) => setConns(Number(e.target.value))}
                   disabled={!hasPlan}
