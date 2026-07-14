@@ -96,7 +96,7 @@ export default function AppLayout() {
   const initials = username.slice(0, 2).toUpperCase();
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-shell" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Header */}
       <header className="dashboard-header">
         
@@ -298,7 +298,7 @@ export default function AppLayout() {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main style={{ flex: 1, padding: '40px 24px', overflowY: 'auto' }}>
+      <main className="app-content" style={{ flex: 1, padding: '40px 24px', overflowY: 'auto' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}

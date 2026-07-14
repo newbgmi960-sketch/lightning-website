@@ -99,10 +99,10 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '16px' }}>
+    <div className="auth-page" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '16px' }}>
       <div className="glow-bg" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%)' }}></div>
       
-      <div className="glass-panel" style={{ padding: '40px 24px', width: '100%', maxWidth: '420px', zIndex: 10, background: 'var(--panel-bg)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
+      <div className="glass-panel auth-card" style={{ padding: '40px 24px', width: '100%', maxWidth: '420px', zIndex: 10, background: 'var(--panel-bg)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
             <Zap size={32} color="var(--accent-color)" />
