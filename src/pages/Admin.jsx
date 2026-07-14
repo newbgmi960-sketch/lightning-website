@@ -16,7 +16,7 @@ export default function Admin() {
   const [editBalance, setEditBalance] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isPlanPickerOpen, setIsPlanPickerOpen] = useState(false);
-  const planOptions = ['None', 'Lightning Bronze', 'Lightning Silver', 'Lightning Gold', 'Lightning Platinum', 'Lightning Diamond'];
+  const planOptions = ['None', 'Lightning Bronze', 'Lightning Silver', 'Lightning Gold', 'Lightning Platinum', 'Lightning Diamond', 'Lightning Owner'];
 
   useEffect(() => {
     fetchUsers();
