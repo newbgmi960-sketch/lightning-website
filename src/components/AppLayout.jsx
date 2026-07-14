@@ -272,6 +272,24 @@ export default function AppLayout() {
                   </NavLink>
                 );
               })}
+              <NavLink
+                to="/profile"
+                style={{
+                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: location.pathname === '/profile' ? '#fff' : 'var(--text-secondary)',
+                  textDecoration: 'none',
+                  borderRadius: '12px',
+                  background: location.pathname === '/profile' ? 'rgba(255,255,255,0.05)' : 'transparent',
+                  border: location.pathname === '/profile' ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
+                }}
+              >
+                <User size={14} /> Profile
+              </NavLink>
             </nav>
 
             <div style={{ height: '1px', background: 'var(--border-color)' }}></div>

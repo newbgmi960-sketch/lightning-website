@@ -13,39 +13,39 @@ export default function Store() {
 
   const monitorPlans = [
     {
-      name: 'Lightning Monitor · 1 Day',
+      name: 'Lightning Bronze',
       price: 200,
       days: 1,
       endpoints: 2,
       features: ['2 monitored endpoints', '1 day workspace access', 'Live health dashboard', 'Email alerts']
     },
     {
-      name: 'Lightning Monitor · 3 Days',
+      name: 'Lightning Silver',
       price: 450,
       days: 3,
-      endpoints: 4,
-      features: ['4 monitored endpoints', '3 days workspace access', 'Live health dashboard', 'Email alerts']
+      endpoints: 2,
+      features: ['2 monitored endpoints', '3 days workspace access', 'Live health dashboard', 'Email alerts']
     },
     {
-      name: 'Lightning Monitor · 7 Days',
+      name: 'Lightning Gold',
       price: 900,
       days: 7,
-      endpoints: 8,
-      features: ['8 monitored endpoints', '7 days workspace access', 'Live health dashboard', 'Priority support']
+      endpoints: 2,
+      features: ['2 monitored endpoints', '7 days workspace access', 'Live health dashboard', 'Priority support']
     },
     {
-      name: 'Lightning Monitor · 14 Days',
+      name: 'Lightning Platinum',
       price: 1600,
       days: 14,
-      endpoints: 12,
-      features: ['12 monitored endpoints', '14 days workspace access', 'Weekly insights', 'Priority support']
+      endpoints: 2,
+      features: ['2 monitored endpoints', '14 days workspace access', 'Weekly insights', 'Priority support']
     },
     {
-      name: 'Lightning Monitor · 30 Days',
+      name: 'Lightning Diamond',
       price: 3000,
       days: 30,
-      endpoints: 20,
-      features: ['20 monitored endpoints', '30 days workspace access', 'Weekly insights', 'Priority support']
+      endpoints: 2,
+      features: ['2 monitored endpoints', '30 days workspace access', 'Weekly insights', 'Priority support']
     }
   ];
 
@@ -124,7 +124,7 @@ export default function Store() {
           Infrastructure monitoring
       </h1>
       <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '32px', textAlign: 'center' }}>
-        One clear subscription—add more monitored endpoints and days as your team grows.
+        Pick your rank. Every plan includes monitoring for two endpoints; longer access unlocks better value.
       </p>
 
       {message.text && (
@@ -186,7 +186,7 @@ export default function Store() {
         {monitorPlans.map((plan, idx) => (
           <div key={idx} className="panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', border: activePlan === plan.name ? '1px solid var(--accent-color)' : '1px solid var(--border-color)' }}>
             <div style={{ color: 'var(--lime)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>{plan.days} day access · {plan.endpoints} endpoints</div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>Lightning Monitor</h3>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>{plan.name}</h3>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '32px' }}>
               <span className="mono" style={{ fontSize: '2.5rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.025em' }}>₹{plan.price.toLocaleString('en-IN')}</span>
               <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>/{plan.days} day{plan.days > 1 ? 's' : ''}</span>
