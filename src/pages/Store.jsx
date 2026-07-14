@@ -3,7 +3,6 @@ import { Check, Loader, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Store() {
-  const [activeTab, setActiveTab] = useState('normal');
   const [balance, setBalance] = useState(0.00);
   const [activePlan, setActivePlan] = useState('None');
   const [loading, setLoading] = useState(true);
@@ -12,56 +11,41 @@ export default function Store() {
   const [promoLoading, setPromoLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' }); // {text: '', type: 'success' | 'error'}
 
-  const normalPlans = [
+  const monitorPlans = [
     {
-      name: 'Starter #1',
-      price: 10.00,
-      features: ['Up to 1 concurrent', 'Max 60s attack', 'API Access', 'Fast Support', '1 Month Access']
+      name: 'Lightning Monitor · 1 Day',
+      price: 200,
+      days: 1,
+      endpoints: 2,
+      features: ['2 monitored endpoints', '1 day workspace access', 'Live health dashboard', 'Email alerts']
     },
     {
-      name: 'BASIC #1',
-      price: 28.00,
-      features: ['Up to 2 concurrent', '120s max time', 'Basic Layer 4 Methods', 'Normal Network priority']
+      name: 'Lightning Monitor · 3 Days',
+      price: 450,
+      days: 3,
+      endpoints: 4,
+      features: ['4 monitored endpoints', '3 days workspace access', 'Live health dashboard', 'Email alerts']
     },
     {
-      name: 'BASIC #2',
-      price: 44.00,
-      features: ['Up to 3 concurrent', '300s max time', 'Basic Layer 4 Methods', 'Normal Network priority']
+      name: 'Lightning Monitor · 7 Days',
+      price: 900,
+      days: 7,
+      endpoints: 8,
+      features: ['8 monitored endpoints', '7 days workspace access', 'Live health dashboard', 'Priority support']
     },
     {
-      name: 'ADVANCED #1',
-      price: 69.00,
-      features: ['Up to 5 concurrent', '500s max time', 'Premium Layer 4 Methods', 'High Network priority', 'API Access']
+      name: 'Lightning Monitor · 14 Days',
+      price: 1600,
+      days: 14,
+      endpoints: 12,
+      features: ['12 monitored endpoints', '14 days workspace access', 'Weekly insights', 'Priority support']
     },
     {
-      name: 'ADVANCED #2',
-      price: 110.00,
-      features: ['Up to 8 concurrent', 'Max 800s attack', 'API Access', 'Fast Support', '1 Month Access']
-    },
-    {
-      name: 'PROFESSIONAL #1',
-      price: 149.00,
-      features: ['Up to 10 concurrent', 'Max 1,200s attack', 'API Access', 'Fast Support', '1 Month Access']
-    },
-    {
-      name: 'PROFESSIONAL #2',
-      price: 190.00,
-      features: ['Up to 13 concurrent', 'Max 1,500s attack', 'API Access', 'Fast Support', '1 Month Access']
-    },
-    {
-      name: 'BUSINESS #1',
-      price: 229.00,
-      features: ['Up to 16 concurrent', 'Max 2,200s attack', 'API Access', 'Fast Support', '1 Month Access']
-    },
-    {
-      name: 'BUSINESS #2',
-      price: 300.00,
-      features: ['Up to 20 concurrent', 'Max 2,500s attack', 'API Access', 'Fast Support', '1 Month Access']
-    },
-    {
-      name: 'ENTERPRISE',
-      price: 600.00,
-      features: ['Up to 40 concurrent', 'Max 2,100s attack', 'API Access', 'Fast Support', '1 Month Access']
+      name: 'Lightning Monitor · 30 Days',
+      price: 3000,
+      days: 30,
+      endpoints: 20,
+      features: ['20 monitored endpoints', '30 days workspace access', 'Weekly insights', 'Priority support']
     }
   ];
 
@@ -98,7 +82,7 @@ export default function Store() {
 
     const newBalance = balance - plan.price;
     const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 30); // 1 Month from now
+    expiryDate.setDate(expiryDate.getDate() + plan.days);
     
     const { data, error } = await supabase.auth.updateUser({
       data: { 
@@ -130,17 +114,17 @@ export default function Store() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '1000px', margin: '0 auto', paddingTop: '40px', paddingBottom: '80px' }}>
       
       {/* Header */}
-      <h1 className="store-title" style={{
+        <h1 className="store-title" style={{
         background: 'linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         marginBottom: '16px',
         letterSpacing: '-0.05em'
       }}>
-        Pricing
+          Infrastructure monitoring
       </h1>
       <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '32px', textAlign: 'center' }}>
-        Choose the plan that fits your needs.
+        One clear subscription—add more monitored endpoints and days as your team grows.
       </p>
 
       {message.text && (
@@ -168,28 +152,13 @@ export default function Store() {
       <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', alignItems: 'center', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px 32px', marginBottom: '40px', width: '100%', maxWidth: '600px', boxSizing: 'border-box' }}>
         <div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Your Balance</div>
-          <div className="mono" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>${balance.toFixed(2)}</div>
+          <div className="mono" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>₹{balance.toFixed(0)}</div>
         </div>
         <div style={{ width: '1px', height: '32px', background: 'var(--border-color)' }}></div>
         <div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Active Plan</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-color)' }}>{activePlan}</div>
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div style={{ display: 'none', background: '#0a0a0a', border: '1px solid var(--border-color)', borderRadius: '32px', padding: '4px', marginBottom: '32px' }}>
-        <button 
-          onClick={() => setActiveTab('normal')}
-          style={{
-            padding: '8px 24px', borderRadius: '28px', border: 'none', 
-            background: activeTab === 'normal' ? 'rgba(255,255,255,0.1)' : 'transparent',
-            color: activeTab === 'normal' ? '#fff' : 'var(--text-secondary)',
-            fontWeight: 600, fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s ease'
-          }}
-        >
-          Normal Plans
-        </button>
       </div>
 
       {/* Promo Code */}
@@ -214,12 +183,13 @@ export default function Store() {
 
       {/* Pricing Grid */}
       <div className="store-pricing-grid">
-        {normalPlans.map((plan, idx) => (
+        {monitorPlans.map((plan, idx) => (
           <div key={idx} className="panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', border: activePlan === plan.name ? '1px solid var(--accent-color)' : '1px solid var(--border-color)' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>{plan.name}</h3>
+            <div style={{ color: 'var(--lime)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>{plan.days} day access · {plan.endpoints} endpoints</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>Lightning Monitor</h3>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '32px' }}>
-              <span className="mono" style={{ fontSize: '2.5rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.025em' }}>${plan.price.toFixed(2)}</span>
-              <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>/ month</span>
+              <span className="mono" style={{ fontSize: '2.5rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.025em' }}>₹{plan.price.toLocaleString('en-IN')}</span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>/{plan.days} day{plan.days > 1 ? 's' : ''}</span>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1 }}>
