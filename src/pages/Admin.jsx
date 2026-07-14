@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Users, Trash2, Edit2, ShieldAlert, CheckCircle2, Loader, X } from 'lucide-react';
+import { Users, Trash2, Edit2, ShieldAlert, CheckCircle2, Loader, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Admin() {
@@ -15,6 +15,8 @@ export default function Admin() {
   const [editPlan, setEditPlan] = useState('');
   const [editBalance, setEditBalance] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isPlanPickerOpen, setIsPlanPickerOpen] = useState(false);
+  const planOptions = ['None', 'Lightning Bronze', 'Lightning Silver', 'Lightning Gold', 'Lightning Platinum', 'Lightning Diamond'];
 
   useEffect(() => {
     fetchUsers();
@@ -39,6 +41,7 @@ export default function Admin() {
     setEditingUser(user);
     setEditPlan(user.active_plan || 'None');
     setEditBalance(user.balance || 0);
+    setIsPlanPickerOpen(false);
   };
 
   const handleSaveEdit = async () => {
@@ -88,7 +91,7 @@ export default function Admin() {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
+    <div className="admin-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
       <div>
         <h1 className="h1" style={{ marginBottom: '4px' }}>Admin Dashboard</h1>
         <p className="text-secondary" style={{ fontSize: '0.875rem' }}>Manage registered users, balances, and plans.</p>
@@ -112,7 +115,7 @@ export default function Admin() {
 
       {/* User List Panel */}
       <div className="panel" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div className="admin-panel-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Users size={18} color="var(--accent-color)" />
             <h2 className="h2" style={{ fontSize: '1rem' }}>Registered Users</h2>
@@ -131,7 +134,7 @@ export default function Admin() {
             <Loader className="animate-spin" size={24} color="var(--accent-color)" />
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="admin-table-wrap" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
@@ -192,7 +195,7 @@ export default function Admin() {
       {/* Edit Modal */}
       <AnimatePresence>
         {editingUser && (
-          <div style={{ 
+          <div className="admin-modal-backdrop" style={{ 
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
             background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 
@@ -201,7 +204,7 @@ export default function Admin() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="panel" style={{ width: '100%', maxWidth: '400px', padding: '24px' }}
+              className="panel admin-edit-modal" style={{ width: '100%', maxWidth: '400px', padding: '24px' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h3 className="h2" style={{ fontSize: '1.25rem' }}>Edit {editingUser.email.split('@')[0]}</h3>
@@ -212,7 +215,7 @@ export default function Admin() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>BALANCE ($)</label>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>BALANCE (₹)</label>
                   <input 
                     type="number" 
                     value={editBalance} 
@@ -221,21 +224,18 @@ export default function Admin() {
                   />
                 </div>
                 
-                <div>
+                <div className="admin-plan-picker">
                   <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>ACTIVE PLAN</label>
-                  <select value={editPlan} onChange={(e) => setEditPlan(e.target.value)}>
-                    <option value="None">None</option>
-                    <option value="STARTER #1">STARTER #1</option>
-                    <option value="BASIC #1">BASIC #1</option>
-                    <option value="BASIC #2">BASIC #2</option>
-                    <option value="ADVANCED #1">ADVANCED #1</option>
-                    <option value="ADVANCED #2">ADVANCED #2</option>
-                    <option value="PROFESSIONAL #1">PROFESSIONAL #1</option>
-                    <option value="PROFESSIONAL #2">PROFESSIONAL #2</option>
-                    <option value="BUSINESS #1">BUSINESS #1</option>
-                    <option value="BUSINESS #2">BUSINESS #2</option>
-                    <option value="ENTERPRISE">ENTERPRISE</option>
-                  </select>
+                  <button type="button" className="admin-plan-trigger" onClick={() => setIsPlanPickerOpen(open => !open)} aria-expanded={isPlanPickerOpen}>
+                    <span>{editPlan}</span><ChevronDown size={16} />
+                  </button>
+                  <AnimatePresence>
+                    {isPlanPickerOpen && <motion.div className="admin-plan-options" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                      {planOptions.map(plan => <button key={plan} type="button" className={plan === editPlan ? 'selected' : ''} onClick={() => { setEditPlan(plan); setIsPlanPickerOpen(false); }}>
+                        <span>{plan}</span>{plan === editPlan && <CheckCircle2 size={15} />}
+                      </button>)}
+                    </motion.div>}
+                  </AnimatePresence>
                 </div>
 
                 <button 
