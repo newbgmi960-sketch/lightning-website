@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, CheckCircle2, Loader, ShieldAlert } from 'lucide-react';
+import { Loader, ShieldAlert } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 const getPlanDetails = (planName) => {
@@ -139,41 +139,6 @@ export default function Profile() {
             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px' }}>EXPIRES</div>
             <div className="mono" style={{ fontWeight: 600, color: '#fff', fontSize: '1rem' }}>{expiry}</div>
           </div>
-        </div>
-      </div>
-
-      {/* Telegram */}
-      <div className="panel" style={{ width: '100%', padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <Send size={18} color="#fff" />
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#fff' }}>Telegram</h3>
-        </div>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px' }}>
-          Link your Telegram so we can reach you about your plan, account, and important updates.
-        </p>
-
-        <div className="telegram-status" style={{
-          background: 'rgba(16, 185, 129, 0.1)', 
-          border: '1px solid rgba(16, 185, 129, 0.2)', 
-          borderRadius: '8px', 
-          padding: '16px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle2 size={18} color="#10b981" />
-            </div>
-            <div>
-              <div style={{ fontWeight: 500, color: '#fff', fontSize: '0.875rem' }}>Connected</div>
-              <div style={{ color: '#10b981', fontSize: '0.8rem' }}>Account contact enabled</div>
-            </div>
-          </div>
-          
-          <button className="btn btn-outline" style={{ background: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
-            Disconnect
-          </button>
         </div>
       </div>
 
