@@ -330,6 +330,14 @@ export default function AppLayout() {
               <a href="https://t.me/incarnativating" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '12px', width: '100%', justifyContent: 'center' }}>
                 <Send size={16} /> Contact @incarnativating
               </a>
+
+              <button 
+                onClick={handleSignOut}
+                className="btn btn-outline" 
+                style={{ padding: '12px', width: '100%', justifyContent: 'center', color: '#ef4444', borderColor: 'rgba(239,68,68,0.2)' }}
+              >
+                <LogOut size={16} /> Sign Out
+              </button>
             </div>
           </motion.div>
         )}
