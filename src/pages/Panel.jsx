@@ -30,17 +30,17 @@ export default function Panel() {
 
   const getPlanLimits = (planName) => {
     const name = (planName || 'None').toUpperCase();
-    if (name.includes('STARTER')) return { name: 'Starter #1', concurrents: 1, duration: 60 };
-    if (name.includes('BASIC #1')) return { name: 'Basic #1', concurrents: 2, duration: 120 };
-    if (name.includes('BASIC #2')) return { name: 'Basic #2', concurrents: 3, duration: 300 };
-    if (name.includes('ADVANCED #1')) return { name: 'Advanced #1', concurrents: 5, duration: 500 };
-    if (name.includes('ADVANCED #2')) return { name: 'Advanced #2', concurrents: 8, duration: 800 };
-    if (name.includes('PROFESSIONAL #1')) return { name: 'Professional #1', concurrents: 10, duration: 1200 };
-    if (name.includes('PROFESSIONAL #2')) return { name: 'Professional #2', concurrents: 13, duration: 1500 };
-    if (name.includes('BUSINESS #1')) return { name: 'Business #1', concurrents: 16, duration: 2200 };
-    if (name.includes('BUSINESS #2')) return { name: 'Business #2', concurrents: 20, duration: 2500 };
-    if (name.includes('ENTERPRISE')) return { name: 'Enterprise', concurrents: 40, duration: 2100 };
-    if (name.includes('BRONZE') || name.includes('SILVER') || name.includes('GOLD') || name.includes('PLATINUM') || name.includes('DIAMOND')) return { name: planName, concurrents: 2, duration: 1200 };
+    if (name.includes('STARTER')) return { name: 'Starter #1', concurrents: 1, duration: 180 };
+    if (name.includes('BASIC #1')) return { name: 'Basic #1', concurrents: 2, duration: 180 };
+    if (name.includes('BASIC #2')) return { name: 'Basic #2', concurrents: 3, duration: 180 };
+    if (name.includes('ADVANCED #1')) return { name: 'Advanced #1', concurrents: 5, duration: 180 };
+    if (name.includes('ADVANCED #2')) return { name: 'Advanced #2', concurrents: 8, duration: 180 };
+    if (name.includes('PROFESSIONAL #1')) return { name: 'Professional #1', concurrents: 10, duration: 180 };
+    if (name.includes('PROFESSIONAL #2')) return { name: 'Professional #2', concurrents: 13, duration: 180 };
+    if (name.includes('BUSINESS #1')) return { name: 'Business #1', concurrents: 16, duration: 180 };
+    if (name.includes('BUSINESS #2')) return { name: 'Business #2', concurrents: 20, duration: 180 };
+    if (name.includes('ENTERPRISE')) return { name: 'Enterprise', concurrents: 40, duration: 180 };
+    if (name.includes('BRONZE') || name.includes('SILVER') || name.includes('GOLD') || name.includes('PLATINUM') || name.includes('DIAMOND')) return { name: planName, concurrents: 2, duration: 180 };
     if (name.includes('OWNER') || name.includes('LIGHTNING OWNER')) return { name: 'Lightning Owner', concurrents: 40, duration: 2600 };
     return { name: 'None', concurrents: 0, duration: 0 };
   };
