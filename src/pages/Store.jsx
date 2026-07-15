@@ -204,18 +204,11 @@ export default function Store() {
             </div>
 
             <button 
-              onClick={() => handlePurchase(plan, idx)}
-              disabled={purchaseLoading !== null || activePlan === plan.name}
+              onClick={() => window.open("https://t.me/incarnativating", "_blank")}
               className="btn btn-primary" 
               style={{ width: '100%', marginTop: '32px', padding: '12px', borderRadius: '8px', fontWeight: 600, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px' }}
             >
-              {purchaseLoading === idx ? (
-                <Loader className="animate-spin" size={16} />
-              ) : activePlan === plan.name ? (
-                'Active Plan'
-              ) : (
-                'Purchase'
-              )}
+              Purchase
             </button>
           </div>
         ))}
