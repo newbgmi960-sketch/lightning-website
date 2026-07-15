@@ -15,6 +15,7 @@ const getPlanDetails = (planName) => {
   if (name.includes('BUSINESS #1')) return { name: 'Business #1', concurrents: 16, duration: 2200 };
   if (name.includes('BUSINESS #2')) return { name: 'Business #2', concurrents: 20, duration: 2500 };
   if (name.includes('ENTERPRISE')) return { name: 'Enterprise', concurrents: 40, duration: 2100 };
+  if (name.includes('BRONZE') || name.includes('SILVER') || name.includes('GOLD') || name.includes('PLATINUM') || name.includes('DIAMOND')) return { name: planName, concurrents: 2, duration: 1200 };
   if (name.includes('OWNER') || name.includes('LIGHTNING OWNER')) return { name: 'Lightning Owner', concurrents: 40, duration: 2600 };
   return { name: 'None', concurrents: 0, duration: 0 };
 };

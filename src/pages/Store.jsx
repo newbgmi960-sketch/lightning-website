@@ -17,35 +17,35 @@ export default function Store() {
       price: 200,
       days: 1,
       endpoints: 2,
-      features: ['2 monitored endpoints', '1 day workspace access', 'Live health dashboard', 'Email alerts']
+      features: ['2 concurrents', '1 day workspace access', 'Live health dashboard', 'Email alerts']
     },
     {
       name: 'Lightning Silver',
       price: 450,
       days: 3,
       endpoints: 2,
-      features: ['2 monitored endpoints', '3 days workspace access', 'Live health dashboard', 'Email alerts']
+      features: ['2 concurrents', '3 days workspace access', 'Live health dashboard', 'Email alerts']
     },
     {
       name: 'Lightning Gold',
       price: 900,
       days: 7,
       endpoints: 2,
-      features: ['2 monitored endpoints', '7 days workspace access', 'Live health dashboard', 'Priority support']
+      features: ['2 concurrents', '7 days workspace access', 'Live health dashboard', 'Priority support']
     },
     {
       name: 'Lightning Platinum',
       price: 1600,
       days: 14,
       endpoints: 2,
-      features: ['2 monitored endpoints', '14 days workspace access', 'Weekly insights', 'Priority support']
+      features: ['2 concurrents', '14 days workspace access', 'Weekly insights', 'Priority support']
     },
     {
       name: 'Lightning Diamond',
       price: 3000,
       days: 30,
       endpoints: 2,
-      features: ['2 monitored endpoints', '30 days workspace access', 'Weekly insights', 'Priority support']
+      features: ['2 concurrents', '30 days workspace access', 'Weekly insights', 'Priority support']
     }
   ];
 
@@ -75,7 +75,7 @@ export default function Store() {
     setPurchaseLoading(idx);
 
     if (balance < plan.price) {
-      setMessage({ text: 'Insufficient balance! Please contact @satanswrath to deposit funds.', type: 'error' });
+      setMessage({ text: 'Insufficient balance! Please contact @Incarnativating to deposit funds.', type: 'error' });
       setPurchaseLoading(null);
       return;
     }
@@ -185,7 +185,7 @@ export default function Store() {
       <div className="store-pricing-grid">
         {monitorPlans.map((plan, idx) => (
           <div key={idx} className="panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', border: activePlan === plan.name ? '1px solid var(--accent-color)' : '1px solid var(--border-color)' }}>
-            <div style={{ color: 'var(--lime)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>{plan.days} day access · {plan.endpoints} endpoints</div>
+            <div style={{ color: 'var(--lime)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>{plan.days} day access · {plan.endpoints} concurrents</div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>{plan.name}</h3>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '32px' }}>
               <span className="mono" style={{ fontSize: '2.5rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.025em' }}>₹{plan.price.toLocaleString('en-IN')}</span>
