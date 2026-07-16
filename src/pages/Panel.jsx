@@ -265,8 +265,8 @@ export default function Panel() {
               />
             </div>
 
-            {/* Subnet and Port Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: layer === 'L4' ? '1.5fr 1fr' : '1fr', gap: '16px' }}>
+            {/* Subnet/Method and Port Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '16px' }}>
               {layer === 'L4' ? (
                 <div>
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>SUBNET</label>
@@ -360,20 +360,18 @@ export default function Panel() {
                   </div>
                 </div>
               )}
-              {layer === 'L4' && (
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>PORT</label>
-                  <input
-                    type="number" 
-                    value={port}
-                    onChange={(e) => setPort(e.target.value)}
-                    placeholder="80" 
-                    className="mono"
-                    disabled={!hasPlan}
-                    style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', width: '100%', boxSizing: 'border-box' }}
-                  />
-                </div>
-              )}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>PORT</label>
+                <input
+                  type="number" 
+                  value={port}
+                  onChange={(e) => setPort(e.target.value)}
+                  placeholder="80" 
+                  className="mono"
+                  disabled={!hasPlan}
+                  style={{ background: '#000', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 12px', width: '100%', boxSizing: 'border-box' }}
+                />
+              </div>
             </div>
 
             {/* Duration Input */}
@@ -440,7 +438,7 @@ export default function Panel() {
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
-                      {(layer === 'L4' ? ['BGMI-V2', 'BGMI'] : ['priv-flood']).map((m) => (
+                      {(layer === 'L4' ? ['BGMI-V2', 'BGMI'] : ['priv-flood', 'httpbypass']).map((m) => (
                         <div 
                           key={m}
                           onClick={() => {
