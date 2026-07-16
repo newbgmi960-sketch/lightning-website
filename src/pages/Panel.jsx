@@ -440,7 +440,7 @@ export default function Panel() {
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
-                      {(layer === 'L4' ? ['BGMI-V2', 'BGMI'] : ['priv-flood', 'ultra-priv-flood', 'priv-bypass-Powerfull', 'http-Powerful', 'browser']).map((m) => (
+                      {(layer === 'L4' ? ['BGMI-V2', 'BGMI'] : ['priv-flood']).map((m) => (
                         <div 
                           key={m}
                           onClick={() => {
