@@ -216,10 +216,24 @@ export default function AppLayout() {
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{activePlan}</div>
                   </div>
                   <div style={{ padding: '4px' }}>
-                    <button className="nav-link" style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/profile')}>
+                    <button 
+                      className="nav-link" 
+                      style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }} 
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        navigate('/profile');
+                      }}
+                    >
                       <User size={14} /> Profile Settings
                     </button>
-                    <button className="nav-link" style={{ width: '100%', border: 'none', background: 'transparent', color: '#ef4444', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={handleSignOut}>
+                    <button 
+                      className="nav-link" 
+                      style={{ width: '100%', border: 'none', background: 'transparent', color: '#ef4444', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }} 
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        handleSignOut();
+                      }}
+                    >
                       <LogOut size={14} /> Sign Out
                     </button>
                   </div>
