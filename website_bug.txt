@@ -1,0 +1,13 @@
+Please list any website bugs or issues you have found below.
+Once you update and save this file, let me know and I will fix them for you!
+
+==================================================
+WEBSITE BUG REPORT
+==================================================
+- Bug Description (What is the issue?):
+
+
+- Steps to Reproduce (Where is it happening?):
+
+
+- Expected Behavior vs. Current Behavior:
