@@ -407,40 +407,42 @@ export default function Panel() {
 
             {layer === 'L7' && (
               <div style={{
-                background: '#0a0a0a',
+                background: '#030303',
                 border: '1px solid var(--border-color)',
-                borderRadius: '12px',
-                padding: '16px 20px',
+                borderRadius: '8px',
+                padding: '12px 16px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 marginTop: '4px'
               }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#fff', textTransform: 'uppercase', marginBottom: '2px' }}>Homehold</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Auto-restart running L7 job when timer ends</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#fff', textTransform: 'uppercase', marginBottom: '2px', letterSpacing: '0.05em' }}>Homehold</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Auto-restart running L7 job when timer ends</div>
                 </div>
                 <div 
                   onClick={() => hasPlan && setHomehold(!homehold)}
                   style={{
-                    width: '44px',
-                    height: '24px',
-                    borderRadius: '12px',
-                    background: homehold ? 'var(--accent-color)' : '#222',
+                    width: '40px',
+                    height: '22px',
+                    borderRadius: '11px',
+                    background: homehold ? 'var(--accent-color)' : '#111',
+                    border: '1px solid var(--border-color)',
                     padding: '2px',
                     cursor: hasPlan ? 'pointer' : 'not-allowed',
-                    transition: 'background 0.2s',
+                    transition: 'all 0.2s ease',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: homehold ? 'flex-end' : 'flex-start'
                   }}
                 >
                   <div style={{
-                    width: '20px',
-                    height: '20px',
+                    width: '16px',
+                    height: '16px',
                     borderRadius: '50%',
-                    background: '#fff',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                    background: homehold ? '#000' : '#fff',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.4)'
                   }}></div>
                 </div>
               </div>
