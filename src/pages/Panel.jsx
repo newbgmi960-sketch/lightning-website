@@ -405,6 +405,47 @@ export default function Panel() {
               </div>
             </div>
 
+            {layer === 'L7' && (
+              <div style={{
+                background: '#0a0a0a',
+                border: '1px solid var(--border-color)',
+                borderRadius: '12px',
+                padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: '4px'
+              }}>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#fff', textTransform: 'uppercase', marginBottom: '2px' }}>Homehold</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Auto-restart running L7 job when timer ends</div>
+                </div>
+                <div 
+                  onClick={() => hasPlan && setHomehold(!homehold)}
+                  style={{
+                    width: '44px',
+                    height: '24px',
+                    borderRadius: '12px',
+                    background: homehold ? 'var(--accent-color)' : '#222',
+                    padding: '2px',
+                    cursor: hasPlan ? 'pointer' : 'not-allowed',
+                    transition: 'background 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: homehold ? 'flex-end' : 'flex-start'
+                  }}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    background: '#fff',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                  }}></div>
+                </div>
+              </div>
+            )}
+
             {/* Duration Input */}
             <div>
               <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>DURATION (MAX {maxDuration}s)</label>
