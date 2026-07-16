@@ -216,26 +216,52 @@ export default function AppLayout() {
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{activePlan}</div>
                   </div>
                   <div style={{ padding: '4px' }}>
-                    <button 
-                      className="nav-link" 
-                      style={{ width: '100%', border: 'none', background: 'transparent', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }} 
+                    <div 
                       onClick={() => {
                         setIsProfileOpen(false);
                         navigate('/profile');
                       }}
+                      style={{ 
+                        width: '100%', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        cursor: 'pointer', 
+                        padding: '6px 12px',
+                        color: 'var(--text-secondary)',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        borderRadius: '6px',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = '#111'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
                     >
                       <User size={14} /> Profile Settings
-                    </button>
-                    <button 
-                      className="nav-link" 
-                      style={{ width: '100%', border: 'none', background: 'transparent', color: '#ef4444', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }} 
+                    </div>
+                    <div 
                       onClick={() => {
                         setIsProfileOpen(false);
                         handleSignOut();
                       }}
+                      style={{ 
+                        width: '100%', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        cursor: 'pointer', 
+                        padding: '6px 12px',
+                        color: '#ef4444',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        borderRadius: '6px',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = '#111'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <LogOut size={14} /> Sign Out
-                    </button>
+                    </div>
                   </div>
                 </div>
               )}
