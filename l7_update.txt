@@ -1,0 +1,13 @@
+Please write the details of the new L7 feature or updates you want to add below.
+Once you update and save this file, let me know and I will implement it for you!
+
+==================================================
+L7 FEATURE / UPDATE DETAILS
+==================================================
+- What is the new feature/setting? (e.g. custom user-agent input, post data payload, cookie settings, proxy selection, etc.):
+
+
+- How should the UI look/work? (Describe inputs, buttons, sliders, etc.):
+
+
+- Any specific API parameters or changes needed in the attack hit URL?:
