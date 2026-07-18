@@ -11,14 +11,15 @@ const features = [
   { icon: <CircleGauge />, title: 'Real-time visibility', text: 'See activity, performance, and usage from one focused command center.' },
   { icon: <LockKeyhole />, title: 'Built for control', text: 'Role-aware access, clear audit trails, and enterprise-ready safeguards.' },
 ];
+const scrollToSection = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   return <header className="landing-header">
     <Link to="/" className="brand" aria-label="LightningBot home"><span className="brand-mark"><Zap size={17} fill="currentColor" /></span><span>lightning<b>bot</b></span></Link>
-    <nav className="landing-nav" aria-label="Main navigation"><a href="#platform">Platform</a><a href="#features">Features</a><a href="#pricing">Pricing</a></nav>
+    <nav className="landing-nav" aria-label="Main navigation"><button onClick={() => scrollToSection('platform')}>Platform</button><button onClick={() => scrollToSection('features')}>Features</button><button onClick={() => scrollToSection('pricing')}>Pricing</button></nav>
     <div className="landing-actions"><Link to="/login" className="header-login">Log in</Link><Link to="/register" className="header-cta">Get started <ArrowRight size={15} /></Link><button className="landing-menu-toggle" onClick={() => setIsMenuOpen(open => !open)} aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}>{isMenuOpen ? <X size={21} /> : <Menu size={21} />}</button></div>
-    {isMenuOpen && <div className="landing-mobile-menu"><a href="#platform" onClick={() => setIsMenuOpen(false)}>Platform</a><a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a><a href="#pricing" onClick={() => setIsMenuOpen(false)}>Pricing</a><Link to="/login">Log in</Link><Link to="/register" className="button button-bright">Get started <ArrowRight size={16} /></Link></div>}
+    {isMenuOpen && <div className="landing-mobile-menu"><button onClick={() => { scrollToSection('platform'); setIsMenuOpen(false); }}>Platform</button><button onClick={() => { scrollToSection('features'); setIsMenuOpen(false); }}>Features</button><button onClick={() => { scrollToSection('pricing'); setIsMenuOpen(false); }}>Pricing</button><Link to="/login">Log in</Link><Link to="/register" className="button button-bright">Get started <ArrowRight size={16} /></Link></div>}
   </header>;
 }
 
@@ -46,14 +47,21 @@ export default function Landing() {
       <div className="video-overlay" aria-hidden="true" />
       <div className="hero-lines" aria-hidden="true"><i /><i /><i /></div>
       <div className="hero-grid" aria-hidden="true" /><div className="hero-orb hero-orb-one" aria-hidden="true" /><div className="hero-orb hero-orb-two" aria-hidden="true" />
-      <motion.div className="hero-content" initial="hidden" animate="visible" transition={{ staggerChildren: 0.11 }}>
-        <motion.div variants={rise} transition={{ duration: 0.55 }} className="liquid-card"><span>[ 2026 ]</span><strong>Built for <em>serious</em> infrastructure.</strong><p>Clarity, control, and confidence for teams that keep the internet moving.</p></motion.div>
-        <motion.div variants={rise} transition={{ duration: 0.55 }} className="eyebrow"><span className="live-dot" /> Built for serious infrastructure</motion.div>
-        <motion.h1 variants={rise} transition={{ duration: 0.6 }}>The control plane<br />for a <em>faster internet.</em></motion.h1>
-        <motion.p variants={rise} transition={{ duration: 0.6 }} className="hero-copy">LightningBot gives modern teams the clarity, speed, and confidence to operate dependable network infrastructure at scale.</motion.p>
-        <motion.div variants={rise} transition={{ duration: 0.6 }} className="hero-buttons"><Link to="/register" className="button button-bright">Launch your workspace <ArrowRight size={18} /></Link><a className="button button-quiet" href="#features"><Terminal size={17} /> Explore the platform</a></motion.div>
-        <motion.div variants={rise} transition={{ duration: 0.6 }} className="hero-proof"><span><Check size={14} /> No card required</span><span><Check size={14} /> Set up in minutes</span><span><Check size={14} /> 24/7 monitoring</span></motion.div>
-      </motion.div>
+      <div className="hero-split">
+        <motion.div className="hero-content" initial="hidden" animate="visible" transition={{ staggerChildren: 0.11 }}>
+          <motion.div variants={rise} transition={{ duration: 0.55 }} className="eyebrow"><span className="live-dot" /> Lightning mode: live</motion.div>
+          <motion.h1 variants={rise} transition={{ duration: 0.6 }}>Move with<br /><em>lightning.</em></motion.h1>
+          <motion.p variants={rise} transition={{ duration: 0.6 }} className="hero-copy">A sharp, electric workspace for teams who want every signal, workflow, and insight in one beautiful place.</motion.p>
+          <motion.div variants={rise} transition={{ duration: 0.6 }} className="hero-buttons"><Link to="/register" className="button button-bright">Enter workspace <ArrowRight size={18} /></Link><button type="button" className="button button-quiet" onClick={() => scrollToSection('features')}><Terminal size={17} /> See the system</button></motion.div>
+          <motion.div variants={rise} transition={{ duration: 0.6 }} className="hero-proof"><span><Check size={14} /> Real-time clarity</span><span><Check size={14} /> Built to scale</span><span><Check size={14} /> Always visible</span></motion.div>
+        </motion.div>
+        <motion.div className="signal-scene" initial={{ opacity: 0, scale: .9, rotate: -5 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: .25, duration: .85, ease: 'easeOut' }} aria-label="Live lightning signal visualization">
+          <span className="scene-label scene-label-top">LIVE SIGNAL</span><span className="scene-label scene-label-bottom">LIGHTNING ENGINE</span>
+          <div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit orbit-three" />
+          <div className="signal-core"><Zap size={42} fill="currentColor" /></div>
+          <div className="scene-chip chip-one"><b>42ms</b><span>response</span></div><div className="scene-chip chip-two"><b>99.99%</b><span>uptime</span></div><div className="scene-index">01</div>
+        </motion.div>
+      </div>
       <motion.div className="hero-console" initial={{ opacity: 0, y: 40, rotateX: 7 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ delay: 0.25, duration: 0.8, ease: 'easeOut' }}>
         <div className="console-topbar"><div className="window-dots"><i /><i /><i /></div><span>live overview</span><span className="console-status"><b /> All systems operational</span></div>
         <div className="console-body"><aside className="console-sidebar"><span className="active"><Command size={15} /></span><span><Activity size={15} /></span><span><Cloud size={15} /></span><span><ShieldCheck size={15} /></span></aside><div className="console-main">
@@ -64,7 +72,7 @@ export default function Landing() {
       </motion.div>
     </section>
     <section className="metrics-section"><p>TRUSTED PERFORMANCE, MEASURABLE RESULTS</p><div className="metrics-grid">{metrics.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div></section>
-    <section className="features-section" id="features"><div className="section-intro"><span className="section-kicker"><Sparkles size={15} /> WHY LIGHTNINGBOT</span><h2>Powerful underneath.<br /><em>Effortless on top.</em></h2><p>Everything you need to keep critical infrastructure healthy—without getting buried in the details.</p></div><div className="feature-grid">{features.map((feature, index) => <motion.article className="feature-card" key={feature.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}><span className="feature-icon">{feature.icon}</span><h3>{feature.title}</h3><p>{feature.text}</p><a href="#pricing">Learn more <ArrowRight size={15} /></a></motion.article>)}</div></section>
+    <section className="features-section" id="features"><div className="section-intro"><span className="section-kicker"><Sparkles size={15} /> BUILT DIFFERENT</span><h2>Powerful underneath.<br /><em>Effortless on top.</em></h2><p>Everything you need to keep critical infrastructure healthy—without getting buried in the details.</p></div><div className="feature-grid">{features.map((feature, index) => <motion.article className="feature-card" key={feature.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}><span className="feature-icon">{feature.icon}</span><span className="feature-number">0{index + 1}</span><h3>{feature.title}</h3><p>{feature.text}</p><button type="button" onClick={() => scrollToSection('pricing')}>Discover more <ArrowRight size={15} /></button></motion.article>)}</div></section>
     <section className="closing-section" id="pricing"><div><span className="section-kicker"><Zap size={15} /> READY WHEN YOU ARE</span><h2>Move at the<br /><em>speed of lightning.</em></h2></div><div className="closing-action"><p>Start with the tools your team needs today, then scale without changing your workflow.</p><Link to="/register" className="button button-bright">Create your account <ArrowRight size={18} /></Link></div></section>
-  </main><footer className="landing-footer"><Link to="/" className="brand"><span className="brand-mark"><Zap size={15} fill="currentColor" /></span><span>lightning<b>bot</b></span></Link><span>© 2026 LightningBot. Built for uptime.</span><div><a href="#platform">Platform</a><a href="#features">Features</a><Link to="/login">Log in</Link></div></footer></div>;
+  </main><footer className="landing-footer"><Link to="/" className="brand"><span className="brand-mark"><Zap size={15} fill="currentColor" /></span><span>lightning<b>bot</b></span></Link><span>© 2026 LightningBot. Built for uptime.</span><div><button onClick={() => scrollToSection('platform')}>Platform</button><button onClick={() => scrollToSection('features')}>Features</button><Link to="/login">Log in</Link></div></footer></div>;
 }
