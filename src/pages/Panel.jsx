@@ -175,16 +175,16 @@ export default function Panel() {
 
   const handleLaunchAttack = async () => {
     if (!target || !method || !hasPlan) return;
-    
+
     setIsAttacking(true);
-    
+    setApiError(null);
+
     // Enforce limits
     const finalConns = Math.min(Number(conns) || 1, maxConns);
     const finalDuration = Math.min(Number(time) || 10, maxDuration);
 
     // All API calls go through our secure Edge Function — no credentials in browser
     try {
-      setApiError(null);
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setApiError('Session expired. Please sign in again.');
@@ -192,7 +192,7 @@ export default function Panel() {
         return;
       }
 
-      const { error: fnError } = await supabase.functions.invoke('launch-attack', {
+      const { data: fnData, error: fnError } = await supabase.functions.invoke('launch-attack', {
         body: {
           layer,
           method,
@@ -206,11 +206,34 @@ export default function Panel() {
       });
 
       if (fnError) {
-        // For UDP-BOTNET (HTTP upstream), edge function may get a fetch error
-        // but we still proceed — attack was dispatched
         if (method !== 'UDP-BOTNET') {
-          console.error('Edge function error:', fnError);
-          setApiError('Failed to connect to attack API. Check target details.');
+          // Try to extract a human-readable message from the error body
+          let msg = 'Attack failed. Check target details.';
+          try {
+            const body = typeof fnError.context?.json === 'function'
+              ? await fnError.context.json()
+              : fnError.context;
+            if (body?.error) msg = body.error;
+            else if (body?.upstream) msg = `API Error: ${body.upstream}`;
+          } catch (_) { /* use default msg */ }
+          setApiError(msg);
+          setIsAttacking(false);
+          return;
+        }
+      }
+
+      // Show upstream API error if returned (e.g. bad token, invalid target)
+      if (fnData && !fnData.success && fnData.error) {
+        setApiError(`API Error: ${fnData.error}`);
+        setIsAttacking(false);
+        return;
+      }
+
+      // Show upstream API message if it indicates an error
+      if (fnData?.upstream && typeof fnData.upstream === 'string') {
+        const up = fnData.upstream.toLowerCase();
+        if (up.includes('error') || up.includes('invalid') || up.includes('fail') || up.includes('unauthorized')) {
+          setApiError(`API: ${fnData.upstream}`);
           setIsAttacking(false);
           return;
         }
@@ -222,33 +245,31 @@ export default function Panel() {
       return;
     }
 
-    // Simulate API delay for a realistic user experience
-    setTimeout(() => {
-      const pad = (num) => String(num).padStart(2, '0');
-      const d = new Date();
-      const formattedDate = `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    // Add tasks immediately — no artificial delay needed
+    const pad = (num) => String(num).padStart(2, '0');
+    const d = new Date();
+    const formattedDate = `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
-      const newTasks = [];
-      const launchTime = Date.now();
-      for (let i = 0; i < finalConns; i++) {
-        newTasks.push({
-          id: `${launchTime}-${i}-${Math.random()}`,
-          target,
-          method: method.toUpperCase(),
-          port,
-          time: finalDuration,
-          timeLeft: finalDuration,
-          startTimestamp: launchTime, // absolute wall-clock for background sync
-          conns: 1, // each simulated attack card shows x1
-          layer,
-          reqMethod: layer === 'L7' ? reqMethod : null,
-          startedAt: formattedDate
-        });
-      }
+    const newTasks = [];
+    const launchTime = Date.now();
+    for (let i = 0; i < finalConns; i++) {
+      newTasks.push({
+        id: `${launchTime}-${i}-${Math.random()}`,
+        target,
+        method: method.toUpperCase(),
+        port,
+        time: finalDuration,
+        timeLeft: finalDuration,
+        startTimestamp: launchTime,
+        conns: 1,
+        layer,
+        reqMethod: layer === 'L7' ? reqMethod : null,
+        startedAt: formattedDate
+      });
+    }
 
-      setActiveTasks(prev => [...newTasks, ...prev]);
-      setIsAttacking(false);
-    }, 800);
+    setActiveTasks(prev => [...newTasks, ...prev]);
+    setIsAttacking(false);
   };
   
   if (loadingPlan) {
