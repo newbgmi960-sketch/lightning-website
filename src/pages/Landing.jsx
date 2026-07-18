@@ -1,7 +1,8 @@
-import React from 'react';
-import { Activity, ArrowRight, Check, ChevronRight, CircleGauge, Cloud, Command, LockKeyhole, Network, ShieldCheck, Sparkles, Terminal, Zap } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Activity, ArrowRight, Check, ChevronRight, CircleGauge, Cloud, Command, LockKeyhole, Menu, Network, ShieldCheck, Sparkles, Terminal, X, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Hls from 'hls.js';
 
 const rise = { hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0 } };
 const metrics = [['99.99%', 'Network uptime'], ['500+', 'Global nodes'], ['2.5M+', 'Operations completed']];
@@ -12,18 +13,41 @@ const features = [
 ];
 
 function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   return <header className="landing-header">
     <Link to="/" className="brand" aria-label="LightningBot home"><span className="brand-mark"><Zap size={17} fill="currentColor" /></span><span>lightning<b>bot</b></span></Link>
     <nav className="landing-nav" aria-label="Main navigation"><a href="#platform">Platform</a><a href="#features">Features</a><a href="#pricing">Pricing</a></nav>
-    <div className="landing-actions"><Link to="/login" className="header-login">Log in</Link><Link to="/register" className="header-cta">Get started <ArrowRight size={15} /></Link></div>
+    <div className="landing-actions"><Link to="/login" className="header-login">Log in</Link><Link to="/register" className="header-cta">Get started <ArrowRight size={15} /></Link><button className="landing-menu-toggle" onClick={() => setIsMenuOpen(open => !open)} aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}>{isMenuOpen ? <X size={21} /> : <Menu size={21} />}</button></div>
+    {isMenuOpen && <div className="landing-mobile-menu"><a href="#platform" onClick={() => setIsMenuOpen(false)}>Platform</a><a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a><a href="#pricing" onClick={() => setIsMenuOpen(false)}>Pricing</a><Link to="/login">Log in</Link><Link to="/register" className="button button-bright">Get started <ArrowRight size={16} /></Link></div>}
   </header>;
 }
 
 export default function Landing() {
+  const videoRef = useRef(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+    const stream = 'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+    let hls;
+    if (Hls.isSupported()) {
+      hls = new Hls({ enableWorker: false });
+      hls.loadSource(stream);
+      hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = stream;
+    }
+    video.play().catch(() => {});
+    return () => hls?.destroy();
+  }, []);
+
   return <div className="landing-page"><Header /><main>
     <section className="hero-section" id="platform">
+      <video ref={videoRef} className="landing-video" autoPlay muted loop playsInline aria-hidden="true" />
+      <div className="video-overlay" aria-hidden="true" />
+      <div className="hero-lines" aria-hidden="true"><i /><i /><i /></div>
       <div className="hero-grid" aria-hidden="true" /><div className="hero-orb hero-orb-one" aria-hidden="true" /><div className="hero-orb hero-orb-two" aria-hidden="true" />
       <motion.div className="hero-content" initial="hidden" animate="visible" transition={{ staggerChildren: 0.11 }}>
+        <motion.div variants={rise} transition={{ duration: 0.55 }} className="liquid-card"><span>[ 2026 ]</span><strong>Built for <em>serious</em> infrastructure.</strong><p>Clarity, control, and confidence for teams that keep the internet moving.</p></motion.div>
         <motion.div variants={rise} transition={{ duration: 0.55 }} className="eyebrow"><span className="live-dot" /> Built for serious infrastructure</motion.div>
         <motion.h1 variants={rise} transition={{ duration: 0.6 }}>The control plane<br />for a <em>faster internet.</em></motion.h1>
         <motion.p variants={rise} transition={{ duration: 0.6 }} className="hero-copy">LightningBot gives modern teams the clarity, speed, and confidence to operate dependable network infrastructure at scale.</motion.p>
