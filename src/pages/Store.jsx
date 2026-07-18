@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Check, Loader, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { getMyEntitlement } from '../lib/entitlements';
 
 export default function Store() {
   const [balance, setBalance] = useState(0.00);
@@ -50,13 +51,13 @@ export default function Store() {
   ];
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setBalance(session.user.user_metadata?.balance ?? 0.00);
-        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
-      }
-      setLoading(false);
-    });
+    getMyEntitlement()
+      .then((entitlement) => {
+        setBalance(entitlement.balance);
+        setActivePlan(entitlement.activePlan);
+      })
+      .catch((error) => setMessage({ text: error.message || 'Unable to load your membership details.', type: 'error' }))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleApplyPromo = async () => {
@@ -74,30 +75,18 @@ export default function Store() {
     setMessage({ text: '', type: '' });
     setPurchaseLoading(idx);
 
-    if (balance < plan.price) {
-      setMessage({ text: 'Insufficient balance! Please contact @Incarnativating to deposit funds.', type: 'error' });
-      setPurchaseLoading(null);
-      return;
-    }
-
-    const newBalance = balance - plan.price;
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + plan.days);
-    
-    const { data, error } = await supabase.auth.updateUser({
-      data: { 
-        balance: newBalance,
-        active_plan: plan.name,
-        plan_expiry: expiryDate.toISOString()
-      }
+    const { data, error } = await supabase.rpc('purchase_membership', {
+      requested_plan: plan.name,
     });
 
     if (error) {
-      setMessage({ text: error.message, type: 'error' });
+      setMessage({ text: error.message === 'Insufficient balance' ? 'Insufficient balance. Please contact @incarnativating to deposit funds.' : error.message, type: 'error' });
     } else {
-      setBalance(newBalance);
-      setActivePlan(plan.name);
-      setMessage({ text: `Success! Purchased ${plan.name}. Your active plan expires on ${expiryDate.toLocaleDateString()}.`, type: 'success' });
+      const entitlement = Array.isArray(data) ? data[0] : data;
+      setBalance(Number(entitlement?.balance ?? 0));
+      setActivePlan(entitlement?.active_plan || plan.name);
+      const expiry = entitlement?.plan_expiry ? new Date(entitlement.plan_expiry).toLocaleDateString() : 'the end of the access period';
+      setMessage({ text: `Success! Purchased ${entitlement?.active_plan || plan.name}. Your active plan expires on ${expiry}.`, type: 'success' });
     }
     setPurchaseLoading(null);
   };

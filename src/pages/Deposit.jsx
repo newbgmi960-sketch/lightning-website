@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Wallet, Send, Info, CheckCircle2, ShieldAlert, Coins } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { getMyEntitlement } from '../lib/entitlements';
 
 export default function Deposit() {
   const [balance, setBalance] = useState(0.00);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setBalance(session.user.user_metadata?.balance ?? 0.00);
-      }
-      setLoading(false);
-    });
+    getMyEntitlement()
+      .then((entitlement) => setBalance(entitlement.balance))
+      .catch(() => setBalance(0))
+      .finally(() => setLoading(false));
   }, []);
 
   return (

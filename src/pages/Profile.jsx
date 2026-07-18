@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Loader, ShieldAlert } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { getMyEntitlement } from '../lib/entitlements';
 
 const getPlanDetails = (planName) => {
   const name = (planName || 'None').toUpperCase();
@@ -27,16 +28,12 @@ export default function Profile() {
   const [message, setMessage] = useState({ text: '', type: '' });
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
-        const rawExpiry = session.user.user_metadata?.plan_expiry;
-        if (rawExpiry) {
-          setExpiry(new Date(rawExpiry).toLocaleDateString());
-        }
-      }
-      setLoading(false);
-    });
+    getMyEntitlement()
+      .then((entitlement) => {
+        setActivePlan(entitlement.activePlan);
+        if (entitlement.planExpiry) setExpiry(new Date(entitlement.planExpiry).toLocaleDateString());
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleUpdatePassword = async (e) => {

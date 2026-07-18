@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Terminal, Globe, ShoppingCart, Wallet, HelpCircle, Send, LogOut, User, Zap, Loader, Shield, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
+import { getMyEntitlement } from '../lib/entitlements';
 
 export default function AppLayout() {
   const navigate = useNavigate();
@@ -48,51 +49,33 @@ export default function AppLayout() {
   useEffect(() => {
     let mounted = true;
 
-    // Check session and force refresh to get latest metadata from DB
-    supabase.auth.refreshSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(session.user);
-        setBalance(session.user.user_metadata?.balance ?? 0.00);
-        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
-        setLoading(false);
-
-        // Auto-upgrade owner to Lightning Owner plan if not set
-        if (session.user.email === 'sagar@lightning.lat' && session.user.user_metadata?.active_plan !== 'Lightning Owner') {
-          supabase.auth.updateUser({
-            data: { active_plan: 'Lightning Owner' }
-          }).then(({ data }) => {
-            if (data?.user && mounted) {
-              setUser(data.user);
-              setActivePlan('Lightning Owner');
-            }
-          });
-        }
-      } else {
+    const hydrateSession = async (session) => {
+      if (!session?.user) {
         navigate('/login');
+        return;
       }
+
+      setUser(session.user);
+      try {
+        const entitlement = await getMyEntitlement();
+        if (mounted) {
+          setBalance(entitlement.balance);
+          setActivePlan(entitlement.activePlan);
+        }
+      } catch (error) {
+        // The app remains usable while the one-time SQL migration is pending.
+        console.warn('Unable to load account entitlement', error.message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    supabase.auth.refreshSession().then(({ data: { session } }) => {
+      hydrateSession(session);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-        setBalance(session.user.user_metadata?.balance ?? 0.00);
-        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
-        setLoading(false);
-
-        // Auto-upgrade owner to Lightning Owner plan if not set
-        if (session.user.email === 'sagar@lightning.lat' && session.user.user_metadata?.active_plan !== 'Lightning Owner') {
-          supabase.auth.updateUser({
-            data: { active_plan: 'Lightning Owner' }
-          }).then(({ data }) => {
-            if (data?.user && mounted) {
-              setUser(data.user);
-              setActivePlan('Lightning Owner');
-            }
-          });
-        }
-      } else {
-        navigate('/login');
-      }
+      hydrateSession(session);
     });
 
     return () => {

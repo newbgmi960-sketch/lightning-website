@@ -1,29 +1,7 @@
-Please provide the details for your new L7 API below so we can integrate it into the panel.
-Simply replace the examples or empty fields below with your actual API endpoints.
+This legacy requirements note was sanitized because it contained a live token
+and remote-operation details. Secrets must never be kept in source files,
+committed documentation, or browser code.
 
-==================================================
-1. NEW L7 ATTACK API DETAILS
-==================================================
-- API Key / Credentials:
-
-
-- Method Names to integrate (e.g., HTTP-GET, HTTP-POST, BYPASS, etc.):
-
-
-- Full API URL Format:
-  (Example: https://api.retrostress.net/l7?key=YOUR_API_KEY&host={host}&time={time}&method={method}&reqs={concurrents})
-  
-  Your actual URL:
-
-
-- Stop L7 Attack API URL (If available):
-  (Example: https://api.retrostress.net/stop_l7?key=YOUR_API_KEY&host={host})
-  
-  Your actual Stop URL:
-
-
-==================================================
-2. REQUEST CONFIGURATION
-==================================================
-- Request Type (GET / POST):
-- Custom Headers (If any):
+Use a legitimate, reviewed backend integration if one is needed in the future.
+Store credentials only as encrypted server-side environment secrets, and apply
+authentication, authorization, audit logging, rate limits, and an allowlist.

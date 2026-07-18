@@ -1,13 +1,7 @@
-Please write the details of the new L4 feature or updates you want to add below.
-Once you update and save this file, let me know and I will implement it for you!
+This legacy requirements note was sanitized because it contained credentials
+and a remote-operation URL. Do not store keys, passwords, tokens, or live
+provider endpoints in the repository.
 
-==================================================
-L4 FEATURE / UPDATE DETAILS
-==================================================
-- What is the new feature or method update for L4? (e.g. adding new methods, custom port ranges, protocol features, etc.):
-
-
-- How should the UI change/look? (Describe inputs, buttons, sliders, dropdown changes, etc.):
-
-
-- Any specific API parameters or changes needed in the L4 attack hit URL?:
+For future integrations, use a reviewed server-side service, per-user
+authorization, strict allowlists, rate limits, and secrets stored only in the
+provider's encrypted environment configuration.

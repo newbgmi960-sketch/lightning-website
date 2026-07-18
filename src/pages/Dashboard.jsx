@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Users, Zap, Server } from 'lucide-react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase } from '../lib/supabaseClient';
+import { getMyEntitlement } from '../lib/entitlements';
 
 const getPlanDetails = (planName) => {
   const name = (planName || 'None').toUpperCase();
@@ -33,21 +34,18 @@ export default function Dashboard() {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setBalance(session.user.user_metadata?.balance ?? 0.00);
-        setActivePlan(session.user.user_metadata?.active_plan ?? 'None');
-        const rawExpiry = session.user.user_metadata?.plan_expiry;
-        if (rawExpiry) {
-          setExpiry(new Date(rawExpiry).toLocaleDateString());
-        }
-      }
-    });
+    getMyEntitlement().then((entitlement) => {
+      setBalance(entitlement.balance);
+      setActivePlan(entitlement.activePlan);
+      if (entitlement.planExpiry) setExpiry(new Date(entitlement.planExpiry).toLocaleDateString());
+    }).catch(() => undefined);
 
-    // Fetch real user count from DB
-    supabase.rpc('get_total_users_count').then(({ data, error }) => {
-      if (!error && data !== null) {
-        setTotalUsers(data);
+    // Server-side checks in the RPC remain the security boundary.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email === 'sagar@lightning.lat') {
+        supabase.rpc('get_total_users_count').then(({ data, error }) => {
+          if (!error && data !== null) setTotalUsers(data);
+        });
       }
     });
   }, []);
