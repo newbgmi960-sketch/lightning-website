@@ -589,47 +589,143 @@ export default function Panel() {
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
                       {layer === 'L4' ? (
-                        ['udp-raw', 'game', 'udp-pirv', 'udp-botnet'].map((m) => (
-                          <div 
-                            key={m}
-                            onClick={() => {
-                              setMethod(m);
-                              setIsMethodDropdownOpen(false);
-                            }}
-                            style={{
-                              padding: '10px 12px',
-                              color: '#fff',
-                              cursor: 'pointer',
-                              background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
-                              borderBottom: '1px solid rgba(255,255,255,0.02)'
-                            }}
-                            onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                            onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
-                          >
-                            {m}
-                          </div>
-                        ))
+                        <>
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.85rem', color: '#4d94ff', fontWeight: 600 }}>Game Methods</div>
+                          {[
+                            { id: 'game', label: '[Normal] game - Valid UDP Data + Dynamic string UDP Flood.', color: '#4d94ff' },
+                          ].map((m) => (
+                            <div 
+                              key={m.id}
+                              onClick={() => {
+                                setMethod(m.id);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: m.color,
+                                cursor: 'pointer',
+                                background: method === m.id ? '#0d6efd' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)',
+                                fontSize: '0.9rem',
+                                color: method === m.id ? '#fff' : m.color
+                              }}
+                              onMouseEnter={(e) => { if(method !== m.id) e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                              onMouseLeave={(e) => { if(method !== m.id) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m.label}
+                            </div>
+                          ))}
+                          
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.85rem', color: '#ffcc00', fontWeight: 600, marginTop: '8px' }}>Special Methods</div>
+                          {[
+                            { id: 'udp-raw', label: '[Raw] udp-raw - Udp flood+RAW with alot gbs (Max 180 sec)', color: '#ffcc00' },
+                            { id: 'udp-pirv', label: '[Private] udp-pirv - Powerful UDP bypass (Private)', color: '#ffcc00' } // Placeholder description as not strictly in screenshot but requested
+                          ].map((m) => (
+                            <div 
+                              key={m.id}
+                              onClick={() => {
+                                setMethod(m.id);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: m.color,
+                                cursor: 'pointer',
+                                background: method === m.id ? '#0d6efd' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)',
+                                fontSize: '0.9rem',
+                                color: method === m.id ? '#fff' : m.color
+                              }}
+                              onMouseEnter={(e) => { if(method !== m.id) e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                              onMouseLeave={(e) => { if(method !== m.id) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m.label}
+                            </div>
+                          ))}
+
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.85rem', color: '#ff4d4d', fontWeight: 600, marginTop: '8px' }}>Botnet Methods</div>
+                          {[
+                            { id: 'udp-botnet', label: '[Botnet] udp-botnet - Udp flood from bots (High GB/s)', color: '#ff4d4d' }
+                          ].map((m) => (
+                            <div 
+                              key={m.id}
+                              onClick={() => {
+                                setMethod(m.id);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: m.color,
+                                cursor: 'pointer',
+                                background: method === m.id ? '#0d6efd' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)',
+                                fontSize: '0.9rem',
+                                color: method === m.id ? '#fff' : m.color
+                              }}
+                              onMouseEnter={(e) => { if(method !== m.id) e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                              onMouseLeave={(e) => { if(method !== m.id) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m.label}
+                            </div>
+                          ))}
+                        </>
                       ) : (
-                        ['priv-flood', 'httpbypass', 'HTTP-LOADBALANCE', 'TLS-FREE', 'http', 'browser'].map((m) => (
-                          <div 
-                            key={m}
-                            onClick={() => {
-                              setMethod(m);
-                              setIsMethodDropdownOpen(false);
-                            }}
-                            style={{
-                              padding: '10px 12px',
-                              color: '#fff',
-                              cursor: 'pointer',
-                              background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
-                              borderBottom: '1px solid rgba(255,255,255,0.02)'
-                            }}
-                            onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                            onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
-                          >
-                            {m}
-                          </div>
-                        ))
+                        <>
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.85rem', color: '#ff4d4d', fontWeight: 600 }}>Advanced</div>
+                          {[
+                            { id: 'http', label: '[Premium] http - Powerful HTTP/2 flood for bypass HTTP-DDOS Cloudflare', color: '#ff4d4d' },
+                            { id: 'priv-flood', label: '[Private] priv-flood - insane rq/s', color: '#ff4d4d' },
+                            { id: 'httpbypass', label: '[Normal] httpbypass - Node.js HTTP/2 Flood: Universal Compatibility + High rqs', color: '#4d94ff' },
+                            { id: 'browser', label: '[Premium] browser - Powerful HTTP/2 flood for bypassing Captcha, UAM Protection.', color: '#4d94ff' },
+                            { id: 'HTTP-LOADBALANCE', label: '[PRIVATE] HTTP-LOADBALANCE - HTTPS flood technique designed to overwhelm load balancers', color: '#ff4d4d' }
+                          ].map((m) => (
+                            <div 
+                              key={m.id}
+                              onClick={() => {
+                                setMethod(m.id);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: m.color,
+                                cursor: 'pointer',
+                                background: method === m.id ? '#0d6efd' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)',
+                                fontSize: '0.9rem',
+                                color: method === m.id ? '#fff' : m.color
+                              }}
+                              onMouseEnter={(e) => { if(method !== m.id) e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                              onMouseLeave={(e) => { if(method !== m.id) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m.label}
+                            </div>
+                          ))}
+                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.85rem', color: '#ff4d4d', fontWeight: 600, marginTop: '8px' }}>Free</div>
+                          {[
+                            { id: 'TLS-FREE', label: '[Free] tls-free - Node.js HTTP/2 Flood, Mimics TLS Traffic with Randomized User Agents, Refer rers', color: '#ff4d4d' }
+                          ].map((m) => (
+                            <div 
+                              key={m.id}
+                              onClick={() => {
+                                setMethod(m.id);
+                                setIsMethodDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                color: m.color,
+                                cursor: 'pointer',
+                                background: method === m.id ? '#0d6efd' : 'transparent',
+                                borderBottom: '1px solid rgba(255,255,255,0.02)',
+                                fontSize: '0.9rem',
+                                color: method === m.id ? '#fff' : m.color
+                              }}
+                              onMouseEnter={(e) => { if(method !== m.id) e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                              onMouseLeave={(e) => { if(method !== m.id) e.currentTarget.style.background = 'transparent' }}
+                            >
+                              {m.label}
+                            </div>
+                          ))}
+                        </>
                       )}
                     </div>
                   </>
