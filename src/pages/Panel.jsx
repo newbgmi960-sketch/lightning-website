@@ -206,7 +206,7 @@ export default function Panel() {
       });
 
       if (fnError) {
-        if (method !== 'UDP-BOTNET') {
+        if (method !== 'udp-botnet') {
           // Try to extract a human-readable message from the error body
           let msg = 'Attack failed. Check target details.';
           try {
@@ -589,50 +589,26 @@ export default function Panel() {
                       boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                     }}>
                       {layer === 'L4' ? (
-                        <>
-                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.65rem', color: '#666', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>GAME METHODS</div>
-                          {['BGMI-V2', 'BGMI'].map((m) => (
-                            <div 
-                              key={m}
-                              onClick={() => {
-                                setMethod(m);
-                                setIsMethodDropdownOpen(false);
-                              }}
-                              style={{
-                                padding: '10px 12px',
-                                color: '#fff',
-                                cursor: 'pointer',
-                                background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
-                                borderBottom: '1px solid rgba(255,255,255,0.02)'
-                              }}
-                              onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                              onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
-                            >
-                              {m}
-                            </div>
-                          ))}
-                          <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.65rem', color: '#666', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: '4px' }}>BOOTNET-METHODS</div>
-                          {['UDP-BOTNET'].map((m) => (
-                            <div 
-                              key={m}
-                              onClick={() => {
-                                setMethod(m);
-                                setIsMethodDropdownOpen(false);
-                              }}
-                              style={{
-                                padding: '10px 12px',
-                                color: '#fff',
-                                cursor: 'pointer',
-                                background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
-                                borderBottom: '1px solid rgba(255,255,255,0.02)'
-                              }}
-                              onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                              onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
-                            >
-                              {m}
-                            </div>
-                          ))}
-                        </>
+                        ['udp-raw', 'game', 'udp-pirv', 'udp-botnet'].map((m) => (
+                          <div 
+                            key={m}
+                            onClick={() => {
+                              setMethod(m);
+                              setIsMethodDropdownOpen(false);
+                            }}
+                            style={{
+                              padding: '10px 12px',
+                              color: '#fff',
+                              cursor: 'pointer',
+                              background: method === m ? 'rgba(255,255,255,0.05)' : 'transparent',
+                              borderBottom: '1px solid rgba(255,255,255,0.02)'
+                            }}
+                            onMouseEnter={(e) => { if(method !== m) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
+                            onMouseLeave={(e) => { if(method !== m) e.currentTarget.style.background = 'transparent' }}
+                          >
+                            {m}
+                          </div>
+                        ))
                       ) : (
                         ['priv-flood', 'httpbypass', 'HTTP-LOADBALANCE', 'TLS-FREE', 'http', 'browser'].map((m) => (
                           <div 
