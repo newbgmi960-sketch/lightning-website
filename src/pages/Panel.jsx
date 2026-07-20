@@ -634,7 +634,7 @@ export default function Panel() {
                           ))}
                         </>
                       ) : (
-                        ['priv-flood', 'httpbypass', 'HTTP-LOADBALANCE', 'TLS-FREE'].map((m) => (
+                        ['priv-flood', 'httpbypass', 'HTTP-LOADBALANCE', 'TLS-FREE', 'http', 'browser'].map((m) => (
                           <div 
                             key={m}
                             onClick={() => {
