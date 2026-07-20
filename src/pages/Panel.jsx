@@ -619,7 +619,7 @@ export default function Panel() {
                           <div style={{ padding: '8px 12px 4px 12px', fontSize: '0.85rem', color: '#ffcc00', fontWeight: 600, marginTop: '8px' }}>Special Methods</div>
                           {[
                             { id: 'udp-raw', label: '[Raw] udp-raw - Udp flood+RAW with alot gbs (Max 180 sec)', color: '#ffcc00' },
-                            { id: 'udp-pirv', label: '[Private] udp-pirv - Powerful UDP bypass (Private)', color: '#ffcc00' } // Placeholder description as not strictly in screenshot but requested
+                            { id: 'udp-priv', label: '[Private] udp-priv - Powerful UDP bypass (Private)', color: '#ffcc00' } // Placeholder description as not strictly in screenshot but requested
                           ].map((m) => (
                             <div 
                               key={m.id}
